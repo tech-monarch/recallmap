@@ -9,8 +9,7 @@ export default function ForgotPasswordPage() {
     <AuthShell>
       <AuthCard
         title="Forgot your password?"
-        subtitle="Enter your email and we'll send you a link to reset it."
-        
+        subtitle="Enter your email to request a password reset link."
       >
         <ForgotPasswordForm />
       </AuthCard>

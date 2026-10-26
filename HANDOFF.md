@@ -11,17 +11,18 @@ Remaining UI: **Milestone 6** = onboarding (`/onboarding` is a placeholder) + Go
 
 ## Backend architecture (read this)
 Intended: Next.js route handlers as the API, PostgreSQL (Aiven) with pgvector, Cloudflare R2 behind a configurable storage interface (S3-compatible), Google OAuth (Auth.js recommended), Gemini server-side with `GEMINI_API_KEY_PRIMARY` first and `GEMINI_API_KEY_SECONDARY` only as a controlled fallback for recoverable quota/rate/availability errors, and a separately configured embedding model. Full details: `docs/ARCHITECTURE.md`, `docs/API_CONTRACTS.md`.
-**Currently implemented: none of the backend.** All learner data is local demo data in React state and resets on reload. The single exception is Preferences, which writes to this browser's `localStorage` (not a server). Supabase is fully removed (no code, packages or env vars; only docs mention its removal). Do not reintroduce it.
+**Currently implemented: none of the backend.** All learner data is local demo data in React state and resets on reload. The single exception is Preferences, which writes to this browser's `localStorage` (not a server). Auth screens call a configurable API contract, but authentication requires a connected backend and has no local success fallback.
 
 ## Stack
-Next.js 16 (App Router; read `node_modules/next/dist/docs/` before using unfamiliar APIs, see AGENTS.md), React 19, Tailwind 4, shadcn/base-ui, lucide-react, vitest + Testing Library. No Supabase. Palette: ink `#163300`, accent `#9fe870`, surface `#fafbf9`, border `#e2e6de`. Font: Outfit (`font-outfit`).
+Next.js 16 (App Router; read `node_modules/next/dist/docs/` before using unfamiliar APIs, see AGENTS.md), React 19, Tailwind 4, shadcn/base-ui, lucide-react, vitest + Testing Library. Palette: ink `#163300`, accent `#9fe870`, surface `#fafbf9`, border `#e2e6de`. Font: Outfit (`font-outfit`).
 
 ## Run (Windows PowerShell)
 ```powershell
 # unzip, then:
 cd recallmap
 npm install                      # or: npm ci  (uses package-lock.json)
-# No env file is needed to run the UI today. For later backend work only:
+# No env file is needed to run the demo UI. Set NEXT_PUBLIC_API_BASE_URL in
+# .env.local when connecting the auth screens to the backend.
 Copy-Item .env.example .env.local   # then edit; .env.local is git-ignored and never packaged
 npm run dev                      # http://localhost:3000
 npx tsc --noEmit                 # typecheck

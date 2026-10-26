@@ -1,10 +1,7 @@
-import SignupScreen from '@/components/auth/SignUpScreen'
-import React from 'react'
+import SignUpScreen from "@/components/auth/SignUpScreen";
 
-function SignUpPage() {
-  return (
-    <SignupScreen/>
-  )
+export const metadata = { title: "Create account · RecallMap" };
+
+export default function SignUpPage() {
+  return <SignUpScreen />;
 }
-
-export default SignUpPage

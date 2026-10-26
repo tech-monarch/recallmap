@@ -1,10 +1,16 @@
 # Planned API contracts (NOT IMPLEMENTED)
-All endpoints require an authenticated session except the auth start/callback. JSON unless noted. Errors: `{ "error": { "code": string, "message": string } }`.
+All endpoints require an authenticated session except authentication and recovery. JSON unless noted. Errors: `{ "error": { "code": string, "message": string } }`.
 
 ## Auth
-- `GET /api/auth/google` → redirects to Google. `GET /api/auth/google/callback?code&state` → sets session, redirects to `/onboarding` (first time) or `/dashboard`.
+- `POST /api/auth/sign-in` ← `{ email, password }` → `200 { user: { id, email } }`, and sets the authenticated session cookie.
+- `POST /api/auth/sign-up` ← `{ name, email, password }` → `201 { user: { id, email } }`, and sets the authenticated session cookie.
+- `POST /api/auth/password/forgot` ← `{ email, redirectUrl }` → `202 { message }`. Send a reset link to `redirectUrl?token=...`; use the same generic response whether or not the email exists.
+- `POST /api/auth/password/reset` ← `{ token, password }` → `204`. Reject expired, invalid, or already-used tokens with the standard error envelope.
+- `GET /api/auth/google` → redirects the browser to Google. The backend handles `GET /api/auth/google/callback?code&state`, sets the authenticated session cookie, and redirects to `/onboarding` (first time) or `/dashboard`; register that backend callback URL with Google.
 - `POST /api/auth/signout` → 204.
 - `GET /api/me` → `{ id, name, email, avatarUrl, onboarded: boolean, preferences }`.
+
+The auth pages call these routes from `lib/auth/api.ts`. Set `NEXT_PUBLIC_API_BASE_URL` to the backend's HTTP(S) origin; each path can be overridden with the matching `NEXT_PUBLIC_AUTH_*_PATH` variable listed in `.env.example`. These endpoint paths and payloads define the integration contract for the frontend; they are not implemented by this repository. For credentialed cross-origin requests, the backend must allow the frontend origin and credentials, and issue an HttpOnly session cookie with appropriate `Secure` and `SameSite` attributes. Do not return session secrets for storage in browser JavaScript.
 
 ## Preferences / onboarding
 - `PUT /api/me/preferences` ← `{ goals?: string, explanationStyle?: ("examples"|"analogies"|"visual"|"steps")[], explanationDepth?: "brief"|"standard"|"detailed", pace?: "slow"|"normal"|"fast", difficulty?: "gentle"|"standard"|"challenging" }` → updated preferences. All optional.
