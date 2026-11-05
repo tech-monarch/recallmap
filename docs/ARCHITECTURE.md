@@ -1,3 +1,5 @@
+> **Partly superseded (2026-11-04).** The approved architecture and the proposed API are now in `docs/architecture/SYSTEM_ARCHITECTURE.md` and `docs/architecture/API_DOCUMENTATION.md`. This file is kept for history; where they conflict, the new documents win (Google-only auth, Next API + worker, Drizzle, R2, `/api/v1`).
+
 # Backend architecture
 
 ## Intended
