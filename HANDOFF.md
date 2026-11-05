@@ -1,5 +1,12 @@
 # HANDOFF — RecallMap
 
+> **Corrections (2026-11-04, verified against the code and by running the checks).** This file is historical; where it disagrees, trust the code and `docs/`.
+> - Tests: **116 tests in 12 files** pass (not 109). `npm run lint` now **works** (ESLint 9 + `eslint-config-next` 16); it was fixed in B0. `npm run build` passes (Next 16.4.5).
+> - Design tokens in use: brand `#0866ff`, ink `#1c2330`, canvas `#f6f8fb` (see `app/globals.css`). The navy `#0f2347` / Inter / Outfit descriptions below are out of date.
+> - Fonts are **Manrope** (UI/headings), **Source Sans 3** (reading), **JetBrains Mono** (code), now **self-hosted** in `app/fonts/` (no Google Fonts requests).
+> - Dependencies removed in B0: `recharts`, `react-hook-form`, `@hookform/resolvers`, `@google/genai`, `framer-motion`, `react-icons`; `shadcn` moved to devDependencies (its CSS is imported by `app/globals.css`).
+
+
 Snapshot: **Milestone 5 complete** (My Progress, Learning History, Preferences). Describes the code in this ZIP, not an aspiration.
 
 ## Purpose

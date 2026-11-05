@@ -18,5 +18,5 @@
 | SEC-LEAK-01..02 | errors carry requestId only; no stack traces | information leakage | B2 | Planned |
 | SEC-DEL-01..03 | deleting material/subject/account removes DB rows, R2 objects, embeddings; data hidden immediately | privacy, retention | B2-B3 | Planned |
 | SEC-HDR-01 | security headers and CSP present | clickjacking, MIME sniffing | B8 | Planned |
-| SEC-DEP-01 | dependency audit has no unresolved critical/high without an approved exception | known CVEs | every milestone | **Baseline executed (ER-001): failing**, see report |
+| SEC-DEP-01 | dependency audit has no unresolved critical/high without an approved exception | known CVEs | every milestone | **Executed (ER-001 failing; ER-002 after B0: 0 critical/high, production deps 0 findings; 13 moderate/low in dev tooling)** |
 | OPS-BKP-01..03 | backup job produces encrypted, checksummed dump; restore passes in isolation; orphan detection works | data loss | B8 | Planned |

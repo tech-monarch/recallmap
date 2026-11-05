@@ -20,7 +20,7 @@ An adaptive learning and knowledge-retention platform. It helps learners see wha
 ## Current implementation status (verified 2026-11-04)
 - **Implemented:** the frontend prototype only (Next.js App Router, React 19, Tailwind 4): landing, auth screens (no backend), dashboard, library, knowledge map, gaps, history, progress, sessions, preferences. Everything runs on **hardcoded demo data**. Real behaviour: deterministic grading of three demo questions, client-side progress/history derivations, preferences and theme in `localStorage`.
 - **Not implemented:** backend, database, authentication, storage, document processing, AI calls, persistence of learning data.
-- **Verified checks:** typecheck passes; 116 unit/UI tests pass; lint is broken; the build was not verifiable in the sandbox; `npm audit` reports a critical Next.js advisory (details in `docs/testing/TEST_EXECUTION_REPORT.md`).
+- **Verified checks (2026-11-04, after B0):** typecheck passes; 116 unit/UI tests pass; ESLint 9 runs clean (1 warning); `next build` passes (Next 16.4.5); `npm audit`: 0 high/critical, 0 findings in production dependencies. Details: `docs/testing/TEST_EXECUTION_REPORT.md`.
 
 ## Approved technical direction
 Next.js API (thin) + separate pg-boss worker; PostgreSQL (Aiven) + Drizzle + pgvector; Cloudflare R2; Zod everywhere; Google OAuth only with opaque hashed server sessions; Gemini behind adapters with a primary key and a conditional secondary key owned by another person (non-personal tasks only, disabled until six gates pass). API must stay extractable from Next.js.

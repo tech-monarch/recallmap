@@ -1,6 +1,6 @@
 # RecallMap: Environment Setup
 
-Last updated 2026-11-04. **Current state:** only frontend variables exist in `.env.example` (untracked in Git, see KI-05). The variables below marked Planned do not exist in code yet. Never put real secrets in documentation, commits, or ZIPs.
+Last updated 2026-11-04. **Current state:** `.env.example` holds frontend variables plus pre-directive placeholders. The variables below marked Planned do not exist in code yet. Never put real secrets in documentation, commits, or ZIPs.
 
 ## Today (frontend prototype)
 ```bash
@@ -8,8 +8,10 @@ npm ci
 npm run dev          # http://localhost:3000
 npx tsc --noEmit
 npx vitest run       # 116 tests passed on 2026-11-04
+npx eslint
+npm run build
 ```
-`npm run lint` is broken (KI-01); `npm run build` needs network access to Google Fonts (KI-03).
+`npm run lint` works (ESLint 9) and `npm run build` needs no external network access (fonts are self-hosted). `.env.example` is now tracked in Git; it still lists the old pre-directive variables and will be rewritten in B1 to match the table below.
 
 ## Planned variables (validated by Zod at startup)
 

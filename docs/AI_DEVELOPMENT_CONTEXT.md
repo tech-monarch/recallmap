@@ -9,9 +9,9 @@ Last updated 2026-11-04. Do not trust this file over the code: verify against th
 
 ## Facts
 - Repository: `github.com/tech-monarch/recallmap` (public), default branch `main`. Pushing needs a fine-grained, repo-scoped token supplied through a secure session mechanism. **Never ask for it in chat, never print or commit it.** If the owner pastes one into chat, treat it as exposed and ask them to revoke it.
-- Stack today: Next.js 16.3.8, React 19.2.8, TypeScript, Tailwind 4, shadcn/base-ui, Vitest 116 tests. No backend.
+- Stack today: Next.js 16.4.5, React 19.2.8, TypeScript, Tailwind 4, shadcn/base-ui, ESLint 9.39.5, Vitest (116 tests). No backend. Commands that pass: `npx tsc --noEmit`, `npx vitest run`, `npx eslint`, `npx next build`. Dependencies: `zod` is installed but not yet used; `@google/genai` was removed and is re-added in B1.
 - Frontend map: `app/` routes; `components/recallmap/*` views; `lib/recallmap/*` domain types and pure helpers (`types.ts`, `progress.ts`, `history.ts`, `knowledge.ts`, `demo-*.ts`); `lib/auth/api.ts` auth client for a non-existent backend; `tests/` Vitest.
-- Known frontend traps: map positions are hardcoded per demo concept id (`DEMO_MAP_LAYOUT`); `knowledge.ts` reads demo constants directly while Progress/History use `LearnerData` + `isDemo`; the Drawer has no focus trap; `reset-password/page.tsx` uses legacy hardcoded colours; fonts load from Google at build time.
+- Known frontend traps: map positions are hardcoded per demo concept id (`DEMO_MAP_LAYOUT`); `knowledge.ts` reads demo constants directly while Progress/History use `LearnerData` + `isDemo`; the Drawer has no focus trap; `reset-password/page.tsx` uses legacy hardcoded colours. Fonts are self-hosted in `app/fonts/`. `shadcn` is a devDependency imported by `app/globals.css`; do not remove it. `cn` is the official shadcn-ui helper package.
 
 ## Approved decisions to respect
 See `PROJECT_CONTEXT.md` principles and `docs/architecture/SYSTEM_ARCHITECTURE.md` section 1. Do not silently change them. Unapproved: learner-state thresholds, hosting, embedding model, OCR approach, graph layout libraries (see the decision register).

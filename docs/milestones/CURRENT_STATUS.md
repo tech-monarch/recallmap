@@ -2,18 +2,18 @@
 
 Last updated 2026-11-04.
 
-- **Milestone:** B0 inspection and planning (documentation only). Implementation is **not** approved to start.
-- **Base commit inspected:** `7d67170` on `main` of `github.com/tech-monarch/recallmap` (2 commits, 2026-10-26).
-- **This update:** adds planning/architecture/compliance/testing documents; no application code, dependency, config, or migration changes. Exact commit hash and ZIP name are recorded in the `MANIFEST.txt` inside the delivered ZIP (a file cannot contain the hash of the commit that includes it).
-- **Push status:** the planning commit `e7208012381e813ef9dc57d2b8c996da45693e2b` was **pushed to `origin/main` on 2026-11-04 and verified** (`git ls-remote` shows the same hash as local HEAD; before the push the remote was at `7d67170`). A later docs-only commit corrects this status file; its hash is in the `MANIFEST.txt` of ZIP 2. The access token used was supplied in chat (not through the secure mechanism) and is considered exposed: the owner must revoke all tokens pasted in chat and provide a replacement via a secure mechanism for later work.
-- **Tests executed (2026-11-04):** typecheck pass; 116/116 Vitest pass; lint failed to start (config defect); build blocked by sandbox network (inconclusive); `npm audit`: 23 findings incl. 1 critical (`next`). Details: `docs/testing/TEST_EXECUTION_REPORT.md`.
-- **Known issues:** `docs/KNOWN_ISSUES.md` (KI-01..KI-17).
-- **Blockers:** push credential; DR-01 (B0 hygiene approval), DR-03 (Aiven/pgvector/pg-boss verification), DR-05 (hosting); DR-02 (owner verifying primary key billing/terms; secondary gates G1-G6 open).
-- **Next exact actions:** (1) owner revokes the tokens pasted in chat and sets up a secure credential mechanism; (2) owner reviews the blueprint and answers DR-01, DR-03, DR-05; (3) start B0 hygiene commits if DR-01 is approved.
+- **Milestone:** B0 (engineering foundation): **complete**. B1 (infrastructure and application foundation) is **not started** and waits for owner answers to DR-03 (Aiven/pgvector/pg-boss/R2 feasibility) and DR-05 (hosting).
+- **Base:** planning blueprint pushed earlier (`e7208012`, `95274908`). B0 code commits (oldest first): `b93d01f` hygiene, `e115fdd` Next/ESLint upgrade, `9e3a087` lint fixes, `4a72ead` dependency cleanup, `0be1b0f` self-hosted fonts, then a docs reconciliation commit. The exact final commit hash and ZIP name are in `MANIFEST.txt` inside the delivered ZIP.
+- **Push status:** recorded in the handoff message and the manifest after the push is verified with `git ls-remote`. The tokens used were pasted into chat and are considered exposed: the owner must revoke them and use a secure credential mechanism for later sessions.
+- **Tests executed 2026-11-04 (ER-002):** `tsc` pass; Vitest 12 files / 116 tests pass; ESLint exit 0 (0 errors, 1 warning); `next build` pass (Next 16.4.5, 17 pages); `next start` smoke test pass (HTTP level); `npm audit`: 13 low/moderate in dev tooling, 0 high/critical, 0 in production dependencies. Not executed: browser/visual checks, e2e, security suites, accessibility.
+- **Known issues:** `docs/KNOWN_ISSUES.md` (open: KI-07..13, 16..19).
+- **Blockers for B1:** DR-03, DR-05; DR-02 blocks learner-content AI features in production (owner verifying primary key billing/terms); secondary Gemini key gates G1-G6 open.
+- **Next exact actions:** (1) owner revokes the pasted tokens and sets up a secure credential mechanism; (2) owner answers DR-05 (hosting) and approves starting B1 feasibility checks (DR-03); (3) begin B1.
 
-## ZIP and commit log
+## Delivery log
 
 | Date | Update | ZIP | Commit | Verified |
 |---|---|---|---|---|
-| 2026-11-04 | Planning documents (B0 inspection) | `RecallMap_2026-11-04_B0_Planning_Docs_1.zip` | `e7208012` (pushed, verified) | integrity test + secret scan passed |
-| 2026-11-04 | Status correction (push confirmed) | `RecallMap_2026-11-04_B0_Planning_Docs_2.zip` | see MANIFEST.txt in the ZIP | see handoff message |
+| 2026-11-04 | Planning documents | `RecallMap_2026-11-04_B0_Planning_Docs_1.zip` | `e7208012` (pushed) | integrity + secret scan |
+| 2026-11-04 | Status correction | `RecallMap_2026-11-04_B0_Planning_Docs_2.zip` | `95274908` (pushed) | integrity + secret scan |
+| 2026-11-04 | B0 engineering foundation | `RecallMap_2026-11-04_B0_Engineering_Foundation.zip` | see MANIFEST.txt | see handoff message |

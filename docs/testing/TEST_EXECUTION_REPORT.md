@@ -36,3 +36,23 @@ Not executed: Playwright/e2e (none exist), security tests (none exist), browser/
 ### Resulting defects (tracked in `docs/KNOWN_ISSUES.md`)
 
 KI-01 ESLint cannot run; KI-02 Next.js affected by critical advisories; KI-03 build requires Google Fonts network access; KI-04 docs claim wrong test counts; KI-05 `.env.example` untracked.
+
+
+## ER-002: B0 re-run after changes
+
+| Field | Value |
+|---|---|
+| Date | 2026-11-04 |
+| Environment | same sandbox as ER-001 (Node v22.23.4, npm 10.9.9), working clone of `main` after the B0 commits; network limited to an allowlist |
+| Changes under test | Next 16.3.8 -> 16.4.5; ESLint 8 -> 9.39.5 and `eslint-config-next` 14 -> 16.4.5; unused dependencies removed; fonts self-hosted; hygiene fixes |
+
+| ID | Command | Result | Status |
+|---|---|---|---|
+| BL-02 (re-run) | `npx tsc --noEmit` | exit 0 | **Passed** |
+| BL-03 (re-run) | `npx vitest run` | 12 files, **116 tests passed** (re-run after each of the three code-affecting commits) | **Passed** |
+| BL-04 (re-run) | `npx eslint` | exit 0; 0 errors, 1 warning (`iconClassName` unused in `components/reusables/BrandMark.tsx`, a component nothing renders). Before the fix: 1 error (`react-hooks/set-state-in-effect` in `hooks/use-mobile.ts`) and 2 warnings, now resolved | **Passed** (1 warning) |
+| BL-05 (re-run) | `npx next build` | exit 0; Next 16.4.5 (Turbopack); compiled, type-checked, 17 pages generated; no network access to Google needed | **Passed** |
+| BL-07 | `next start` smoke test on port 3100 | `/`, `/auth/login`, `/dashboard`, `/dashboard/map`, `/dashboard/progress`, `/api/sidebar-images` all HTTP 200; homepage HTML has no googleapis/gstatic references; three self-hosted woff2 files referenced | **Passed** (HTTP/HTML level only; no browser rendering check) |
+| BL-06 (re-run) | `npm audit` | whole tree: 13 findings (2 low, 11 moderate), **0 high, 0 critical**; production dependencies (`--omit=dev`): **0 findings** | **Passed** against the "no unresolved critical/high" gate; moderate/low dev-tooling findings remain and are tracked |
+
+Limits: no browser/visual regression check was performed for the font change or the `useIsMobile` rewrite (the hook is exercised by the existing component tests only indirectly); Playwright/e2e does not exist yet; security tests and accessibility checks not executed.

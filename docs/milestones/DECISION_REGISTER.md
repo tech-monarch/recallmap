@@ -4,7 +4,9 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 
 ## Blocking
 
-### DR-01 B0 hygiene changes (Blocking for B0)
+### DR-01 B0 hygiene changes: **RESOLVED 2026-11-04** (owner said "begin"; applied as recommended)
+> Outcome: (a) Next 16.4.5, (b) ESLint 9 + eslint-config-next 16, (c) fonts self-hosted, (d) nested zip removed and `*.zip` ignored, (e) `.gitattributes` added, (f) `.env.example` tracked, (g) unused dependencies removed after re-verification. **Correction:** `shadcn` was proposed for removal but is imported by `app/globals.css`, so it moved to devDependencies instead; `cn` is the official shadcn-ui package and stays. Evidence: `docs/testing/TEST_EXECUTION_REPORT.md` ER-002. The original text follows for the record.
+
 - **Decide:** approve these repository changes: (a) upgrade `next` to a patched version (registry latest is 16.4.5; confirm compatibility); (b) fix lint by moving **forward** (ESLint 9 + `eslint-config-next` 16.x matching Next, not downgrading the config); (c) self-host the three fonts with `next/font/local` so builds do not need Google at build time and visitors do not hit Google Fonts; (d) remove the redundant `recallmap.zip` from the repository (history keeps it) and ignore `*.zip`; (e) add `.gitattributes` (`* text=auto eol=lf`) to stop CRLF churn; (f) track `.env.example` (fix the `.env*` ignore pattern); (g) remove genuinely unused dependencies after re-verifying (`zod` is **kept**, it is now required).
 - **Why:** audit baseline found a critical advisory on the installed Next version, a broken lint, a network-dependent build, and repository hygiene issues.
 - **Approaches:** apply all in one B0 update (recommended), or only (a),(b),(f) first.

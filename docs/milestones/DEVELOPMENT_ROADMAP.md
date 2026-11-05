@@ -16,7 +16,7 @@ Every milestone ends with: tests and checks run, documentation updated, security
 | B7 | Progress, history, retention | B6 | M |
 | B8 | Production readiness | all | L |
 
-## B0: Engineering foundation (no feature work)
+## B0: Engineering foundation (no feature work): **COMPLETE 2026-11-04 (see CURRENT_STATUS.md)**
 - **Objectives:** a verified, honest baseline; repository hygiene; reconciled docs.
 - **Tasks:** apply DR-01 items; re-run typecheck, tests, lint, audit; fix stale doc claims (test counts, palette/fonts); initialize workflow (branch, commit conventions); keep the frontend unchanged.
 - **Deliverables:** green typecheck/tests/lint, build verified in a networked environment or with self-hosted fonts, `npm audit` with no critical/high or documented exceptions, updated docs, ZIP.
