@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Manrope, Source_Sans_3 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { THEME_INIT_SCRIPT, ThemeProvider } from "@/lib/recallmap/theme";
 
-const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"], display: "swap" });
-const sourceSans = Source_Sans_3({ variable: "--font-source-sans", subsets: ["latin"], display: "swap" });
-const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], display: "swap" });
+// Self-hosted (see app/fonts/README.md): no build-time or runtime requests to Google Fonts.
+const manrope = localFont({ src: "./fonts/manrope-latin-wght-normal.woff2", variable: "--font-manrope", weight: "200 800", display: "swap" });
+const sourceSans = localFont({ src: "./fonts/source-sans-3-latin-wght-normal.woff2", variable: "--font-source-sans", weight: "200 900", display: "swap" });
+const jetbrains = localFont({ src: "./fonts/jetbrains-mono-latin-wght-normal.woff2", variable: "--font-jetbrains", weight: "100 800", display: "swap" });
 
 export const metadata: Metadata = {
   title: "RecallMap",
