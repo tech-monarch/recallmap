@@ -18,7 +18,6 @@ export function getSafeNextPath(
   if (next.includes("\\")) return null;
 
   // Control characters / whitespace tricks.
-  // eslint-disable-next-line no-control-regex
   if (/[\u0000-\u001f\u007f]/.test(next)) return null;
 
   // Final check: resolve against a dummy origin and make sure it stays there.
