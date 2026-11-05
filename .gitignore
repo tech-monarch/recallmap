@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: ignore real values, keep the template tracked
 .env*
+!.env.example
+
+# archives (delivery ZIPs are build artifacts, never tracked)
+*.zip
 
 # vercel
 .vercel
