@@ -9,9 +9,9 @@ Every milestone ends with: tests and checks run, documentation updated, security
 | B0 | Engineering foundation | DR-01 | S |
 | B1 | Infrastructure and application foundation | B0, DR-03, DR-05 | M |
 | B2 | Authentication, users, privacy basics | B1 | M |
-| B3 | Curriculum, subjects, document library | B2, DR-06, DR-07, DR-09 | XL |
+| B3 | Curriculum, subjects, document library | B2, DR-06, DR-07, DR-09; **AI stages (embeddings, concept extraction) also DR-18** | XL |
 | B4 | Knowledge graph and maps | B3, DR-08 | L |
-| B5 | Learning and assessment (tutor, questions, attempts, evidence rows) | B4, DR-02 | L |
+| B5 | Learning and assessment (tutor, questions, attempts, evidence rows) | B4, DR-02, **DR-18** | L |
 | B6 | Adaptive intelligence (policy engine, recommendations, companion) | B5, DR-04 | L |
 | B7 | Progress, history, retention | B6 | M |
 | B8 | Production readiness | all | L |
@@ -62,6 +62,9 @@ Every milestone ends with: tests and checks run, documentation updated, security
 ## B8: Production readiness
 - **Tasks:** full integration, Playwright suite, security and performance testing, backup jobs and restore drill, monitoring and operations dashboard, incident and recovery docs, legal pages finalized and reviewed, accessibility audit, staging then production deployment, final acceptance.
 - **Acceptance:** release gates in `SECURITY_ARCHITECTURE.md` section 5 satisfied; restore verified; no critical/high unresolved issue without a reviewed exception.
+
+## Feasibility pre-work (B1, done 2026-11-05)
+See `docs/architecture/FEASIBILITY_VERIFICATION.md`. Result: infrastructure choices (Aiven + pgvector, pg-boss, R2) are feasible with one design correction (R2 presign has no length-range); the Gemini API terms raise a blocking age-restriction question (DR-18). Remaining B1 pre-work not yet done: Google OAuth library choice, graph layout and OCR/PDF library evaluation (later milestones), live Aiven plan check (needs your plan details).
 
 ## Not before their prerequisites
 Retention scheduling before assessment evidence exists; AI recommendations before deterministic eligibility; secondary Gemini key before G1-G6; any learner-content AI feature in production before DR-02.

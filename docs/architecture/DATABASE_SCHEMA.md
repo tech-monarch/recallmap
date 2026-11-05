@@ -139,7 +139,7 @@ erDiagram
 
 - B-tree: all FK columns; `(user_id, ...)` composites on hot reads: `attempts(user_id, completed_at desc)`, `activities(user_id, subject_id, completed_at desc)` for cursor pagination, `evidence(user_id, concept_id, created_at desc)`, `answers(attempt_id)`.
 - Vector: per-subject corpora are small, so start with **exact** cosine search filtered by `subject_id`/`user_id` (no ANN index). Add HNSW (`vector_cosine_ops`) only when measured latency requires it. Reason: HNSW combined with a selective `WHERE` can return fewer rows than requested unless iterative scans are available (pgvector version dependent; verify on Aiven).
-- Embedding model and dimension are not yet chosen (DR-06); `embedding_model`/`embedding_dim` are stored so models can change by re-embedding.
+- Candidate model `gemini-embedding-2` (or `-001`), output dimension 768 or 1536 (recommended sizes; vector spaces of the two models are incompatible, so a model change means re-embedding). `vector` indexes have a dimension limit (verify at B1); this is another reason to start without an index. Embedding model and dimension are not yet chosen (DR-06); `embedding_model`/`embedding_dim` are stored so models can change by re-embedding.
 
 ## 6. Authoritative versus derived data
 

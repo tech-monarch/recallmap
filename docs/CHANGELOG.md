@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-05: B1 feasibility verification (documentation only)
+- Added `docs/architecture/FEASIBILITY_VERIFICATION.md` (sources and dates). Findings: Gemini API terms forbid use in applications directed at or likely accessed by under-18s (new DR-18, KI-20); unpaid versus paid data-use terms confirmed; Nigeria is an available region; R2 presigned URLs cannot enforce a length range (design corrected); Aiven pgvector 0.8.1 and PgBouncer facts; pg-boss requirements; Gemini embedding models and dimensions.
+- No code, dependency, or configuration changes.
+
 ## 2026-11-04: B0 engineering foundation (code and configuration)
 - **Security:** `next` 16.3.8 -> 16.4.5 (affected by two critical RCE advisories and one high DoS advisory). `npm audit`: 23 findings (1 critical) -> 13 (0 high, 0 critical); production dependencies 0.
 - **Tooling:** ESLint 8 -> 9.39.5, `eslint-config-next` 14 -> 16.4.5; `npm run lint` now runs (exit 0, 1 warning). Fixed `useIsMobile` (`react-hooks/set-state-in-effect`) using `useSyncExternalStore`; removed a stale `eslint-disable`.

@@ -123,6 +123,8 @@ Dependency rules (to be enforced with ESLint `no-restricted-imports` and a CI ch
 
 **Failure recovery.** Worker crash: expired jobs are retried. Poison job: dead-letter plus failed status plus user-visible retry. Database outage: jobs are not lost (they live in the database); the worker backs off. Gemini outage: the stage retries with backoff, then fails with `ai_unavailable` (retryable by the user). Orphan detection: a scheduled job lists R2 objects without rows and rows without objects.
 
+**Aiven connections (docs verified 2026-11-05).** Aiven provides built-in PgBouncer (default transaction mode) on a different port from the direct connection, and both can be used at once. Plan: API (and any serverless runtime) uses the pooled connection with `pgbouncer.max_prepared_statements` reviewed for Drizzle; the worker and pg-boss use the **direct** connection (pg-boss behaviour behind transaction pooling is not verified). pg-boss needs Node 22.12+, PostgreSQL 13+, `pgcrypto` and `CREATE` privilege.
+
 **Connection budget.** Aiven plans cap connections. Budget example (confirm against the plan): API pool max 5 per instance (serverless functions need a pooler), worker pool max 5, pg-boss 5, migrations/admin 2. Pool sizes are Zod-validated env settings.
 
 **Hosting requirements and costs.** See `docs/deployment/DEPLOYMENT_REQUIREMENTS.md`. Cost drivers: an always-on worker host, Aiven plan, R2 storage (egress to the internet is not charged by R2; verify current pricing), and Gemini tokens (embeddings, extraction, tutoring). No figures are asserted here; they are collected during the B1 feasibility check.

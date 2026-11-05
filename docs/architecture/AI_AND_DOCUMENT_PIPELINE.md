@@ -8,7 +8,8 @@
 
 - **Approved (owner, 2026-11-04):** `GEMINI_API_KEY_PRIMARY` is the owner's credential. `GEMINI_API_KEY_SECONDARY` belongs to **another person** who independently manages it. The secondary is a conditional fallback, disabled until all verification gates pass.
 - **Documented by Google (checked 2026-11-04):** rate limits are applied **per project, not per API key**, are tied to the project's usage tier, and spend-based limits also return `429 RESOURCE_EXHAUSTED`. Source: `https://ai.google.dev/gemini-api/docs/rate-limits`. Therefore different owners *probably* mean different quota pools, but project separation, tier, billing and quotas **must be verified, not assumed** (gate G2/G3).
-- **Unverified:** whether either key's project is on a paid tier (owner will verify, DR-02), the data-use terms that apply to each, and whether each key type remains supported. These are open items, not assumptions.
+- **Verified 2026-11-05 (Google's terms, effective March 23, 2026):** unpaid quota content may be used to improve Google products and reviewed by humans; paid (billing-enabled project) content is not used to improve products. **Also: the terms prohibit using the Services in an application directed at or likely to be accessed by under-18s (`FEASIBILITY_VERIFICATION.md` F1, DR-18). This applies to both keys and every task, and is unresolved.**
+- **Unverified:** whether either key's project is on a paid tier (owner will verify, DR-02), and whether each key type remains supported. These are open items, not assumptions.
 
 ### 1.2 Credential slots
 
@@ -100,7 +101,7 @@ Every call writes `ai_usage` (task, model, **slot**, attempt, fallback yes/no, o
 
 ### 4.1 Storage
 
-Cloudflare R2, private bucket, key `u/{userId}/m/{materialId}/original` (server-generated, never derived from the filename). Presigned PUT URLs: single key, `content-length-range`, 10-minute expiry, bound to the material. Originals are preserved after processing. Extracted artifacts (text, sections) live in the database.
+Cloudflare R2, private bucket, key `u/{userId}/m/{materialId}/original` (server-generated, never derived from the filename). Presigned PUT URLs: single key, 10-minute expiry, bound to the material. R2 presigned URLs support GET/HEAD/PUT/DELETE only and **not POST policies**, so `content-length-range` is impossible (verified 2026-11-05, `FEASIBILITY_VERIFICATION.md` F5): the signature covers `Content-Type` and the exact `Content-Length` the learner declared; the completion step verifies the real size and type with a HEAD request; the worker re-validates content; an R2 lifecycle rule deletes incomplete/unreferenced objects; the bucket needs a CORS rule for the app origin. Originals are preserved after processing. Extracted artifacts (text, sections) live in the database.
 
 ### 4.2 Stages (Proposed state model)
 

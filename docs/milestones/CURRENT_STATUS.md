@@ -7,7 +7,8 @@ Last updated 2026-11-04.
 - **Push status:** recorded in the handoff message and the manifest after the push is verified with `git ls-remote`. The tokens used were pasted into chat and are considered exposed: the owner must revoke them and use a secure credential mechanism for later sessions.
 - **Tests executed 2026-11-04 (ER-002):** `tsc` pass; Vitest 12 files / 116 tests pass; ESLint exit 0 (0 errors, 1 warning); `next build` pass (Next 16.4.5, 17 pages); `next start` smoke test pass (HTTP level); `npm audit`: 13 low/moderate in dev tooling, 0 high/critical, 0 in production dependencies. Not executed: browser/visual checks, e2e, security suites, accessibility.
 - **Known issues:** `docs/KNOWN_ISSUES.md` (open: KI-07..13, 16..19).
-- **Blockers for B1:** DR-03, DR-05; DR-02 blocks learner-content AI features in production (owner verifying primary key billing/terms); secondary Gemini key gates G1-G6 open.
+- **B1 feasibility pre-work (2026-11-05, documentation only):** `docs/architecture/FEASIBILITY_VERIFICATION.md`. New **blocking** decision DR-18 (Gemini age restriction) for any AI feature; R2 upload design corrected.
+- **Blockers for B1:** DR-03 (needs your Aiven plan details), DR-05; **DR-18 for AI stages**; DR-02 blocks learner-content AI features in production (owner verifying primary key billing/terms); secondary Gemini key gates G1-G6 open.
 - **Next exact actions:** (1) owner revokes the pasted tokens and sets up a secure credential mechanism; (2) owner answers DR-05 (hosting) and approves starting B1 feasibility checks (DR-03); (3) begin B1.
 
 ## Delivery log

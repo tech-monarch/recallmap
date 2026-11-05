@@ -23,8 +23,8 @@ The integration **stays disabled** (`GEMINI_SECONDARY_ENABLED=false`) until ever
 | G1 | Owner identified; written authorization naming RecallMap and permitted use | Open | - | - |
 | G2 | Google Cloud project/account confirmed, different from primary's project | Open | - | - |
 | G3 | Tier, billing, per-model quotas, model parity with primary | Open | - | - |
-| G4 | Data-processing terms for that project acceptable for the eligible tasks; documented in privacy policy | Open | - | - |
-| G5 | Google terms permit this sharing arrangement (legal review); key type and authentication currently supported; test call per slot passes | Open | - | - |
+| G4 | Data-processing terms for that project acceptable for the eligible tasks; documented in privacy policy. Google's published terms (2026-11-05): unpaid quota content may be used to improve products; paid-project content is not | Open | https://ai.google.dev/gemini-api/terms | - |
+| G5 | Google terms permit this sharing arrangement (legal review); key type and authentication currently supported; test call per slot passes. **Also blocked by DR-18** (age restriction applies to the whole application) | Open | - | - |
 | G6 | Revocation contact, notice method, and tested revoke -> auto-disable -> alert procedure | Open | - | - |
 
 Secondary owner contact and the authorization document are **not** recorded in the repository (they are personal data and a confidential agreement); this file records only that they exist and where they are kept (owner to fill in: private location).
@@ -33,6 +33,6 @@ Secondary owner contact and the authorization document are **not** recorded in t
 
 | Item | Status |
 |---|---|
-| Project and billing tier | **UNVERIFIED** (owner to verify) |
+| Project and billing tier | **UNVERIFIED** (owner to verify); **DR-18 (age restriction) applies regardless of tier** |
 | Data-use terms applicable to that tier | **UNVERIFIED** |
 | `AI_LEARNER_CONTENT_ENABLED` | must stay `false` in production until the two rows above are resolved |

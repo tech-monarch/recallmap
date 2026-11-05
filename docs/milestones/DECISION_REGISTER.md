@@ -15,7 +15,7 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 
 ### DR-02 AI data terms and tier (Blocking for any learner-content AI feature; unresolved by design)
 - **Decide:** (1) the owner verifies the primary key's project, billing tier and data-use terms; (2) approve the **secondary-eligible task list** in `AI_AND_DOCUMENT_PIPELINE.md` 1.4, including whether `concept_extraction` on uploaded documents remains eligible given documents may contain personal data (optional per-document opt-out).
-- **Why:** free/unpaid tiers may allow Google to use submitted content to improve products; learner content may include minors' data.
+- **Why:** **verified 2026-11-05:** Google's terms say unpaid-quota content is used to improve products and may be read by human reviewers, with a warning not to submit sensitive or personal information; paid (billing-enabled project) content is not used to improve products. Learner content may include minors' data. See also DR-18.
 - **Approaches:** billed project for learner content (recommended); or restrict AI to non-personal tasks until resolved.
 - **Consequences:** until resolved, `AI_LEARNER_CONTENT_ENABLED=false` in production, so the tutor and grading stay off there (staging uses synthetic data).
 
@@ -31,6 +31,12 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 - **Recommendation:** (2) for the first release unless you already operate a serverless deployment you want to keep; it avoids connection-pool surprises and lets the worker share the runtime.
 - **Consequences:** drives connection budgeting, cost, deployment pipeline, and cookie/domain setup.
 
+### DR-18 Gemini API age and consumer-use restrictions (Blocking for any AI-dependent feature; found 2026-11-05)
+- **Decide:** how RecallMap complies with Google's Gemini API Additional Terms, which say the Services must not be used in an application directed towards or likely to be accessed by individuals under 18, are for professional/business (not consumer) use, and require paid services for users in the EEA, Switzerland and the UK. Details and sources: `docs/architecture/FEASIBILITY_VERIFICATION.md` F1.
+- **Approaches:** (A) make RecallMap an 18+ product with an age gate and adult-only positioning; (B) use Gemini through Google Cloud if its terms permit your audience (to be verified); (C) change or add an AI provider whose terms permit school-age users (needs your approval, the adapter design allows it); (D) ask Google for written clarification.
+- **Recommendation:** treat this as blocking for the AI stages (concept extraction, embeddings, tutor, grading) and get qualified legal advice before any of them ship; decide your target learner age first (DR-15). Start with option A or B only after verification. Non-AI B1/B2 work is unaffected.
+- **Consequences:** if unresolved, no learner-facing AI can ship on the Gemini Developer API. This outranks DR-02 (the paid tier fixes data use but does not remove the age clause).
+
 ## Milestone-specific
 
 ### DR-04 Learner-state thresholds and choices (B6)
@@ -39,7 +45,8 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 - **Consequences:** shapes every progress screen; changing later is a versioned recompute, not a rewrite.
 
 ### DR-06 Embedding model and dimension (B3)
-- **Recommendation:** choose after checking current Gemini embedding models and dimension options; store model and dimension on each chunk; start with exact search.
+- **Verified 2026-11-05:** `gemini-embedding-2` (multimodal, 8,192-token input) and `gemini-embedding-001` (text, 2,048 tokens); dimensions 128-3072, recommended 768/1536/3072; the models' spaces are incompatible. Depends on DR-18 (whether Gemini can be used at all).
+- **Recommendation:** `gemini-embedding-2` at 768 or 1536 dimensions if Gemini remains the provider; store model and dimension on each chunk; start with exact search.
 
 ### DR-07 OCR approach (B3)
 - **Approaches:** worker-local OCR (private, heavier, quality varies) versus Gemini multimodal (quality, but sends images to a provider; subject to DR-02) versus a dedicated OCR API.

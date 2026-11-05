@@ -30,6 +30,8 @@ Plan: real pages in the existing design at `/legal/*`, linked from the footer an
 
 RecallMap may be used by school-age learners. No minimum age is invented here. Required review: appropriate minimum age, parental/guardian consent obligations under the applicable law, privacy implications for minors' data (including what is sent to AI providers), safe AI interaction (content controls, no emotional-dependency design, escalation wording), and age-related account safeguards. The memory/profile design avoids storing a minor's age by default; whether onboarding asks for age or education level only is DR-15.
 
+**Provider terms conflict (verified 2026-11-05):** the Gemini API Additional Terms prohibit use in an application directed at or likely to be accessed by under-18s (see `docs/architecture/FEASIBILITY_VERIFICATION.md` F1 and DR-18). This interacts directly with the minimum-age and target-learner decisions above and must be resolved before AI features ship.
+
 ## 5. Compliance checklist (status as of 2026-11-04)
 
 | Item | Status |
@@ -42,7 +44,7 @@ RecallMap may be used by school-age learners. No minimum age is invented here. R
 | Accessibility statement | Not started (needs real audit results) |
 | Child safety review | Not started; blocked on DR-15 |
 | Data inventory (what, where, why, retention) | Draft in `DATABASE_SCHEMA.md` and `THIRD_PARTY_PROCESSORS.md` |
-| Processor list and terms | Draft; Gemini terms and tiers **unverified** |
+| Processor list and terms | Draft; Gemini terms read 2026-11-05 (age restriction found, DR-18); key tiers still **unverified** |
 | Deletion procedure | Designed (`DATABASE_SCHEMA.md` section 7); not implemented |
 | Breach response procedure | Not started (B8) |
 | Legal review | **Not performed** |
