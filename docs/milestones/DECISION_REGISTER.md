@@ -1,5 +1,7 @@
 # RecallMap: Outstanding Decision Register
 
+> **Update 2026-11-05.** Owner decisions recorded: DR-03 (Aiven free plan), DR-05 (Render free tier), DR-18 (continue with Gemini Developer API using synthetic data only; remains a production compliance blocker), DR-02 (billing still unverified, owner will check). New: DR-19 to DR-23. Details: `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`.
+
 Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 clarifications: S1, S2, S3, worker/queue, GitHub auth) are **not** listed. Classification: **Blocking** (needed before implementation starts), **Milestone-specific**, **Deferred**, **Optional**. Last updated 2026-11-04.
 
 ## Blocking
@@ -13,25 +15,28 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 - **Recommendation:** all, as separate small commits, each with tests/typecheck re-run; font change is visual-neutral if the same font files are used.
 - **Consequences:** skipping (a) leaves a deployed app on a version with published critical advisories (the code paths appear unused here, but that is not verified for a deployed instance).
 
-### DR-02 AI data terms and tier (Blocking for any learner-content AI feature; unresolved by design)
+### DR-02 AI data terms and tier (Blocking for any learner-content AI feature; **OPEN**: owner has not yet confirmed whether the primary project has billing enabled)
 - **Decide:** (1) the owner verifies the primary key's project, billing tier and data-use terms; (2) approve the **secondary-eligible task list** in `AI_AND_DOCUMENT_PIPELINE.md` 1.4, including whether `concept_extraction` on uploaded documents remains eligible given documents may contain personal data (optional per-document opt-out).
 - **Why:** **verified 2026-11-05:** Google's terms say unpaid-quota content is used to improve products and may be read by human reviewers, with a warning not to submit sensitive or personal information; paid (billing-enabled project) content is not used to improve products. Learner content may include minors' data. See also DR-18.
 - **Approaches:** billed project for learner content (recommended); or restrict AI to non-personal tasks until resolved.
 - **Consequences:** until resolved, `AI_LEARNER_CONTENT_ENABLED=false` in production, so the tutor and grading stay off there (staging uses synthetic data).
 
-### DR-03 Infrastructure feasibility (Blocking for B1)
+### DR-03 Infrastructure feasibility: **DECIDED 2026-11-05: start on Aiven's free PostgreSQL plan; verification pending** (blocking only for pgvector-dependent work in B3)
+> Outcome: free-plan facts documented (1 GB disk, 20 connections, no pooling, may power off when idle, no static IPs); simulation shows Drizzle, pgvector and pg-boss work within those limits; **pgvector on the free plan itself is unverified until the owner runs the acceptance test** (`docs/deployment/SETUP_GUIDE.md` 7.3). No paid plan may be purchased without approval. Original text follows.
 - **Decide/verify:** Aiven plan and PostgreSQL version support pgvector and the privileges to create extensions and the `pgboss` schema; connection limits; pg-boss compatibility and direct-connection behaviour; R2 presign and limits.
 - **Approaches:** verify against live documentation and a scratch database; fall back to a different Postgres host or a different queue only if a check fails (Redis only if pg-boss is demonstrably unsuitable).
 - **Recommendation:** run the checks first in B1 and record sources and dates.
 - **Consequences:** a failed check changes B1 scope; no schema work starts before it passes.
 
-### DR-05 Hosting for web and worker (Blocking for B1)
+### DR-05 Hosting for web and worker: **DECIDED 2026-11-05: Render free tier initially; persistent worker is NOT available free (see DR-21)**
+> Outcome: free web service spins down after 15 minutes idle; free instances are not available for Background Workers or Cron Jobs. Cheapest workaround: embedded worker in the web process for cloud development plus a local standalone worker for heavy jobs; first paid step if needed is the Render Starter web service. Original text follows.
 - **Decide:** where Next.js runs (serverless versus persistent host) and where the persistent worker runs.
 - **Approaches:** (1) Next.js on a serverless host plus a small always-on worker host (cheap, needs strict DB pool limits and a pooler); (2) both on one persistent host or container platform (simpler connections and one deployment, no serverless limits); (3) managed container service for both.
 - **Recommendation:** (2) for the first release unless you already operate a serverless deployment you want to keep; it avoids connection-pool surprises and lets the worker share the runtime.
 - **Consequences:** drives connection budgeting, cost, deployment pipeline, and cookie/domain setup.
 
-### DR-18 Gemini API age and consumer-use restrictions (Blocking for any AI-dependent feature; found 2026-11-05)
+### DR-18 Gemini API age and consumer-use restrictions: **PARTIALLY DECIDED 2026-11-05; remains a production compliance blocker**
+> Owner decision: keep using the Gemini Developer API for **development, experimentation and testing with synthetic data only**; continue building tutor, graph generation, question generation and document understanding; **no real learner information, identifiable student data or minors' educational content** while the contractual and privacy issues are unresolved; keep the AI integration provider-independent; continue investigating Google's terms and alternatives. The audience stays secondary-school students, independent candidates and other learners (**not** adults-only). Enabling billing, using another key, or switching to Vertex AI are **not** assumed to resolve the age restriction. Technical guard: `AI_DATA_MODE` (`docs/deployment/FREE_TIER_INFRASTRUCTURE.md` 4.2). Alternatives research: `docs/architecture/TECH_RESEARCH.md` section 5. Original analysis follows.
 - **Decide:** how RecallMap complies with Google's Gemini API Additional Terms, which say the Services must not be used in an application directed towards or likely to be accessed by individuals under 18, are for professional/business (not consumer) use, and require paid services for users in the EEA, Switzerland and the UK. Details and sources: `docs/architecture/FEASIBILITY_VERIFICATION.md` F1.
 - **Approaches:** (A) make RecallMap an 18+ product with an age gate and adult-only positioning; (B) use Gemini through Google Cloud if its terms permit your audience (to be verified); (C) change or add an AI provider whose terms permit school-age users (needs your approval, the adapter design allows it); (D) ask Google for written clarification.
 - **Recommendation:** treat this as blocking for the AI stages (concept extraction, embeddings, tutor, grading) and get qualified legal advice before any of them ship; decide your target learner age first (DR-15). Start with option A or B only after verification. Non-AI B1/B2 work is unaffected.
@@ -44,7 +49,7 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 - **Recommendation:** A, keep `sessions_demo = 2`, run in shadow mode on real data before finalizing.
 - **Consequences:** shapes every progress screen; changing later is a versioned recompute, not a rewrite.
 
-### DR-06 Embedding model and dimension (B3)
+### DR-06 Embedding model and dimension (B3) (Phase 0 default: 768 dimensions)
 - **Verified 2026-11-05:** `gemini-embedding-2` (multimodal, 8,192-token input) and `gemini-embedding-001` (text, 2,048 tokens); dimensions 128-3072, recommended 768/1536/3072; the models' spaces are incompatible. Depends on DR-18 (whether Gemini can be used at all).
 - **Recommendation:** `gemini-embedding-2` at 768 or 1536 dimensions if Gemini remains the provider; store model and dimension on each chunk; start with exact search.
 
@@ -53,7 +58,7 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 - **Recommendation:** text-layer extraction first; evaluate local OCR on a sample of real scanned notes before choosing; do not route scanned pages through the secondary key.
 
 ### DR-08 Graph layout libraries (B4)
-- **Recommendation:** evaluate `elkjs`/`dagre` for hierarchical and `d3-force` or Cytoscape/React Flow for dynamic on correctness, keyboard accessibility, touch, bundle size; pick established libraries, no custom engine.
+- **Recommendation (updated 2026-11-05):** prototype `@dagrejs/dagre` (hierarchical, maintained, MIT) and `d3-force` (dynamic) with `@xyflow/react` as an optional renderer; `elkjs` is capable but EPL/GPL licensed; the old `dagre` package is unmaintained. Pick on keyboard accessibility, touch, bundle size; no custom engine.
 
 ### DR-09 Curriculum template authoring (B3)
 - **Decide:** who creates shared templates (seed data by you, admin UI, community, AI-assisted drafts reviewed by you) and which boards/systems ship first.
@@ -87,3 +92,28 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 
 ### DR-17 Optional: gamification
 - Out of scope per directive (never a substitute for evidence-based progress). Revisit only as supplementary analytics.
+
+## Added 2026-11-05
+
+### DR-19 OAuth/session library (B2)
+- **Approaches:** Arctic + our own session layer; Better Auth; Auth.js; hand-rolled.
+- **Recommendation:** Arctic 3.x with our own opaque hashed DB sessions (framework-independent, supports revocation, matches the approved session design). Auth.js is in security-patch mode per third-party reports and its DB sessions fit poorly with Next 16's proxy. Details: `docs/architecture/TECH_RESEARCH.md` section 1.
+- **Consequences:** more code we own (session table, rotation, revocation) but no framework schema to adopt.
+
+### DR-20 Node runtime version (B1a)
+- **Decide:** the Node version for local, CI and Render.
+- **Facts:** pg-boss needs 22.12+; `pdfjs-dist` 22.13+ or 24; `unpdf` needs 24; `officeparser` has strict patched ranges.
+- **Recommendation:** Node 24 LTS, pinned in `engines` and `.nvmrc`, after confirming Render honours `NODE_VERSION` and CI passes on it. The audit sandbox has Node 22.23.4.
+
+### DR-21 Worker mode on the free tier (B1a)
+- **Decide:** approve `WORKER_MODE=embedded|standalone|off`, with `embedded` as the Render-free default and a local `standalone` worker for heavy jobs.
+- **Why:** Render free instances cannot be Background Workers and a free web service sleeps after 15 idle minutes.
+- **Recommendation:** approve. Handlers must be idempotent, honour `job.signal`, run with at least two consumers, and development caps (5 MB, 20 pages) protect the small free instance. First paid step if unreliable: Render Starter web service (about $7/month, third-party figure).
+- **Consequences:** scheduled jobs (backups, revision scan) do not run reliably in Phase 0.
+
+### DR-22 Cloudflare R2 activation and payment method (before B1b)
+- **Decide:** whether you are willing to add a payment method if R2 requires one even for the free allowance (10 GB, 1M writes, 10M reads, free egress; overage billed).
+- **Status:** Unverified whether it is required. Recommendation: check in the Cloudflare dashboard, tell me the answer, and add no card without deciding. Fallback for development: fakes or a local S3-compatible store until B3.
+
+### DR-23 Document extraction and OCR stack (B3)
+- **Recommendation:** `file-type` for magic bytes, `pdfjs-dist` (or `unpdf` on Node 24) for PDF text, `mammoth` for DOCX, evaluate `officeparser`, avoid the stale npm `xlsx`, run local OCR (`tesseract.js` or equivalent) only in a local/standalone worker. Details and licences: `docs/architecture/TECH_RESEARCH.md` section 3. Depends on DR-20 and DR-07.

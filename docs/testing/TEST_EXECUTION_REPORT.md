@@ -56,3 +56,14 @@ KI-01 ESLint cannot run; KI-02 Next.js affected by critical advisories; KI-03 bu
 | BL-06 (re-run) | `npm audit` | whole tree: 13 findings (2 low, 11 moderate), **0 high, 0 critical**; production dependencies (`--omit=dev`): **0 findings** | **Passed** against the "no unresolved critical/high" gate; moderate/low dev-tooling findings remain and are tracked |
 
 Limits: no browser/visual regression check was performed for the font change or the `useIsMobile` rewrite (the hook is exercised by the existing component tests only indirectly); Playwright/e2e does not exist yet; security tests and accessibility checks not executed.
+
+
+## ER-003: Infrastructure compatibility spike (simulation)
+
+| Field | Value |
+|---|---|
+| Date | 2026-11-05 |
+| Environment | Sandbox, local PostgreSQL 16.15 with `max_connections=20`, pgvector 0.6.0, non-superuser owner role; Node 22.23.4; drizzle-orm 0.45.4, drizzle-kit 0.31.11, pg 8.23.1, pg-boss 12.38.1 |
+| Scope | **Simulation of the Aiven free plan limits, not Aiven itself** |
+| Result | 13 of 16 checks passed; 3 observations (no `singletonKey` deduplication on standard queues, about 17 usable connections, `vector` not creatable by a non-superuser) feed the design. Full table and scripts: `docs/testing/INFRA_COMPATIBILITY_SPIKE.md` |
+| Status | **Passed with observations**; Aiven acceptance test (`docs/deployment/SETUP_GUIDE.md` 7.3) **Planned, owner to run** |

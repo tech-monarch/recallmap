@@ -7,11 +7,11 @@ Last updated 2026-11-04. Entries marked **UNVERIFIED** have not been confirmed a
 | Processor | Purpose | Data involved | Status |
 |---|---|---|---|
 | Google (sign-in) | Google OAuth | name, email, Google subject id, avatar | planned; terms not yet reviewed |
-| Aiven | PostgreSQL hosting | all application data | plan, region, pgvector support **UNVERIFIED** |
+| Aiven (free plan, Phase 0) | PostgreSQL hosting | **synthetic data only** in Phase 0 | free plan: 1 GB, 20 connections, may power off, no static IPs (verified); region and pgvector support **UNVERIFIED** |
 | Cloudflare R2 | private file storage and encrypted backups | uploaded documents, DB exports | planned; terms not reviewed |
 | Google Gemini, **primary** key (owner) | AI tasks | task-dependent (see AI doc) | billing tier and data terms **UNVERIFIED** (DR-02, owner will verify) |
 | Google Gemini, **secondary** key (a different person) | conditional fallback for non-personal tasks only | document text for concept extraction, document chunks, question generation from material | **DISABLED**; gates G1-G6 open |
-| Hosting provider(s) for web and worker | execution | all traffic | not chosen (DR-05) |
+| Render (free web service, Phase 0) | execution of the Next.js app and embedded worker | **synthetic data only** in Phase 0 | region and terms not yet recorded |
 | Error tracking / monitoring | diagnostics | redacted events | not chosen |
 
 ## 2. Secondary Gemini key: enablement checklist (owner decision S3)
@@ -36,3 +36,7 @@ Secondary owner contact and the authorization document are **not** recorded in t
 | Project and billing tier | **UNVERIFIED** (owner to verify); **DR-18 (age restriction) applies regardless of tier** |
 | Data-use terms applicable to that tier | **UNVERIFIED** |
 | `AI_LEARNER_CONTENT_ENABLED` | must stay `false` in production until the two rows above are resolved |
+
+## 4. Synthetic-data rule (owner decision, 2026-11-05)
+
+Until DR-18 and the privacy items are resolved, every environment contains **synthetic data only**: no real learners, no real documents, no real accounts. Enforced procedurally and by `AI_DATA_MODE=synthetic` (`docs/deployment/FREE_TIER_INFRASTRUCTURE.md` 4.2). The Gemini free tier may use submitted content to improve Google products (verified in the terms), which is a second reason for the rule.

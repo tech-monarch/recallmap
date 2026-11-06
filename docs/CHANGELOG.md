@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-05: Free-tier infrastructure planning (documentation only)
+- Added `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`, `docs/deployment/SETUP_GUIDE.md`, `docs/architecture/TECH_RESEARCH.md`, `docs/testing/INFRA_COMPATIBILITY_SPIKE.md` (ER-003).
+- Recorded owner decisions: Aiven free plan (DR-03), Render free tier (DR-05), Gemini with synthetic data only and DR-18 as a production blocker, DR-02 still open; added DR-19 to DR-23.
+- Findings: Aiven free = 1 GB / 20 connections / no pooling / may power off; Render free has no free worker and spins down after 15 idle minutes; R2 free allowance verified; Drizzle + pgvector + pg-boss work within a simulated 20-connection limit; pg-boss needs `exclusive`-style queue policies for deduplication.
+- **No application code, dependency or configuration changes.**
+
 ## 2026-11-05: B1 feasibility verification (documentation only)
 - Added `docs/architecture/FEASIBILITY_VERIFICATION.md` (sources and dates). Findings: Gemini API terms forbid use in applications directed at or likely accessed by under-18s (new DR-18, KI-20); unpaid versus paid data-use terms confirmed; Nigeria is an available region; R2 presigned URLs cannot enforce a length range (design corrected); Aiven pgvector 0.8.1 and PgBouncer facts; pg-boss requirements; Gemini embedding models and dimensions.
 - No code, dependency, or configuration changes.

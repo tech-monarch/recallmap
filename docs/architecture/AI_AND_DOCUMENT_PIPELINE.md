@@ -11,6 +11,9 @@
 - **Verified 2026-11-05 (Google's terms, effective March 23, 2026):** unpaid quota content may be used to improve Google products and reviewed by humans; paid (billing-enabled project) content is not used to improve products. **Also: the terms prohibit using the Services in an application directed at or likely to be accessed by under-18s (`FEASIBILITY_VERIFICATION.md` F1, DR-18). This applies to both keys and every task, and is unresolved.**
 - **Unverified:** whether either key's project is on a paid tier (owner will verify, DR-02), and whether each key type remains supported. These are open items, not assumptions.
 
+### 1.1a Owner decision on DR-18 (2026-11-05)
+Gemini Developer API is used for **development and testing with synthetic data only**; no real learner or minors' data until the contractual and privacy issues are resolved; the integration stays provider-independent (`AiProvider` interface); billing, another key, or Vertex AI are not assumed to resolve the age restriction. `AI_DATA_MODE=synthetic|real` is the technical guard (`docs/deployment/FREE_TIER_INFRASTRUCTURE.md` 4.2); the secondary key remains disabled behind G1-G6.
+
 ### 1.2 Credential slots
 
 Two independent adapter instances, `primary` and `secondary`. Each has its own key, enable flag, circuit breaker and counters. Keys exist only in the server/worker config module (validated by Zod), never in `NEXT_PUBLIC_*`, client bundles, logs, API responses, or the repository.

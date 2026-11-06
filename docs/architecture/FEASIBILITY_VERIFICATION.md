@@ -61,3 +61,15 @@ Recommendation: do not build any AI-dependent learner feature on the Gemini Deve
 3. Aiven: API uses the pooled connection (transaction mode, with prepared-statement setting reviewed), worker and pg-boss use the direct connection. (`SYSTEM_ARCHITECTURE.md`)
 4. Hosting must provide Node 22.12 or newer (pg-boss).
 5. New blocking decision DR-18; DR-02 updated with the verified paid/unpaid terms.
+
+## 5. Free-tier verification (2026-11-05)
+
+Full detail: `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`; simulation: `docs/testing/INFRA_COMPATIBILITY_SPIKE.md`; libraries: `docs/architecture/TECH_RESEARCH.md`.
+
+| Item | Result |
+|---|---|
+| Aiven free PostgreSQL | Verified: 1 CPU, 1 GB RAM, **1 GB disk**, `max_connections` 20, **no pooling**, no static IPs/VPC, may be powered off when inactive, backups included (details unverified). pgvector on the free plan: **unverified** |
+| Render free | Verified: web services spin down after 15 idle minutes (about a minute to wake), 750 free instance hours per workspace per month, **no free Background Workers or Cron Jobs** |
+| Cloudflare R2 | Verified: free 10 GB-month, 1M Class A, 10M Class B, free egress; payment-method requirement for activation unverified |
+| Drizzle + pgvector + pg-boss within the limits | **Simulated, passed with observations** (ER-003): not a test of the real services |
+| Libraries | Verified from npm: Arctic 3.7.0, drizzle-orm 0.45.4, drizzle-kit 0.31.11, pg 8.23.1, pg-boss 12.38.1 (Node >= 22.12), others in TECH_RESEARCH |

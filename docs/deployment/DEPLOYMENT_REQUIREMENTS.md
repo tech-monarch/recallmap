@@ -1,5 +1,7 @@
 # RecallMap: Deployment, Operations, Backup and Recovery Requirements
 
+> **Phase 0 note (2026-11-05):** development currently runs on Aiven free + Render free (`FREE_TIER_INFRASTRUCTURE.md`, `SETUP_GUIDE.md`). The production-oriented targets below (availability, RPO/RTO, scheduled R2 backups, restore drills) are **not met by the free tier** and are required before any real learner data exists.
+
 **Status: REQUIREMENTS and PROPOSED targets. Nothing is deployed from this design yet.** The current repository's deployment (if any) is the frontend-only prototype; its hosting configuration has not been inspected. Last updated 2026-11-04.
 
 ## 1. Environments

@@ -13,6 +13,9 @@ Last updated 2026-11-04. Do not trust this file over the code: verify against th
 - Frontend map: `app/` routes; `components/recallmap/*` views; `lib/recallmap/*` domain types and pure helpers (`types.ts`, `progress.ts`, `history.ts`, `knowledge.ts`, `demo-*.ts`); `lib/auth/api.ts` auth client for a non-existent backend; `tests/` Vitest.
 - Known frontend traps: map positions are hardcoded per demo concept id (`DEMO_MAP_LAYOUT`); `knowledge.ts` reads demo constants directly while Progress/History use `LearnerData` + `isDemo`; the Drawer has no focus trap; `reset-password/page.tsx` uses legacy hardcoded colours. Fonts are self-hosted in `app/fonts/`. `shadcn` is a devDependency imported by `app/globals.css`; do not remove it. `cn` is the official shadcn-ui helper package.
 
+## Infrastructure facts (2026-11-05)
+Phase 0: Aiven free (1 GB, 20 connections, no pooling, may power off), Render free (sleeps after 15 min, no free worker), R2 free allowance. Never create a pool per request; budget connections; worker modes via `WORKER_MODE`. Synthetic data only; `AI_DATA_MODE` guard. No paid service or provisioning without explicit owner approval. Spike and scripts: `docs/testing/INFRA_COMPATIBILITY_SPIKE.md`.
+
 ## Approved decisions to respect
 See `PROJECT_CONTEXT.md` principles and `docs/architecture/SYSTEM_ARCHITECTURE.md` section 1. Do not silently change them. Unapproved: learner-state thresholds, hosting, embedding model, OCR approach, graph layout libraries (see the decision register).
 

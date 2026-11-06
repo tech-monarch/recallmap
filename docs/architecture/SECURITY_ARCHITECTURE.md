@@ -22,6 +22,9 @@
 | Third-party AI processor risk | task eligibility list, learner-content gate, six secondary gates, minimization | SEC-AI-* |
 | Data loss | backups and restore tests (`docs/deployment/DEPLOYMENT_REQUIREMENTS.md`) | OPS-* |
 
+## 1a. Phase 0 free-tier notes (2026-11-05)
+Aiven free has no static IPs or VPC, and Render free has shared outbound addresses, so the database cannot be IP-restricted tightly: TLS, a dedicated application role, strong generated passwords, rotation on any exposure, and synthetic data only are the controls. Free tiers offer no availability or backup guarantees, which is acceptable only for synthetic development data.
+
 ## 2. Headers and transport
 
 HTTPS only (HSTS), `Content-Security-Policy` with nonces (the theme bootstrap script gets a nonce), `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, frame protection, restrictive CORS (same-origin initially; explicit allowlist after any extraction). Existing `next.config.ts` has `/sw.js` header rules for a service worker that does not exist; remove or replace in B0.

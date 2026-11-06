@@ -13,6 +13,8 @@ npm run build
 ```
 `npm run lint` works (ESLint 9) and `npm run build` needs no external network access (fonts are self-hosted). `.env.example` is now tracked in Git; it still lists the old pre-directive variables and will be rewritten in B1 to match the table below.
 
+**Free-tier environments, per-environment values, Aiven/Render/R2 steps and the Aiven acceptance test:** `docs/deployment/SETUP_GUIDE.md` and `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`. Additional planned variables: `APP_ENV`, `WORKER_MODE` (`embedded|standalone|off`), `DATABASE_POOLED_URL`, `DB_POOL_MAX_API`, `DB_POOL_MAX_WORKER`, `PGBOSS_POOL_MAX`, `AI_DATA_MODE` (`synthetic` default), `AI_REAL_DATA_APPROVAL_REF`, `DEV_MAX_UPLOAD_MB`, `DEV_MAX_PAGES`, `JOB_CONCURRENCY`. Node 22.12+ is required (Node 24 LTS proposed, DR-20).
+
 ## Planned variables (validated by Zod at startup)
 
 | Variable | Purpose | Notes |

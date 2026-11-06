@@ -22,6 +22,9 @@ An adaptive learning and knowledge-retention platform. It helps learners see wha
 - **Not implemented:** backend, database, authentication, storage, document processing, AI calls, persistence of learning data.
 - **Verified checks (2026-11-04, after B0):** typecheck passes; 116 unit/UI tests pass; ESLint 9 runs clean (1 warning); `next build` passes (Next 16.4.5); `npm audit`: 0 high/critical, 0 findings in production dependencies. Details: `docs/testing/TEST_EXECUTION_REPORT.md`.
 
+## Phase 0 infrastructure (owner decision 2026-11-05)
+Aiven free PostgreSQL + Render free web service (embedded worker) + Cloudflare R2 free allowance + Gemini Developer API with **synthetic data only**. No paid service without explicit approval. See `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`.
+
 ## Approved technical direction
 Next.js API (thin) + separate pg-boss worker; PostgreSQL (Aiven) + Drizzle + pgvector; Cloudflare R2; Zod everywhere; Google OAuth only with opaque hashed server sessions; Gemini behind adapters with a primary key and a conditional secondary key owned by another person (non-personal tasks only, disabled until six gates pass). API must stay extractable from Next.js.
 
