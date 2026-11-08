@@ -29,10 +29,13 @@ Date: 2026-11-05. Throwaway directory outside the repository; no repository file
 | 10 | Stuck handler honouring `job.signal` with `expireInSeconds` 3 | signal aborted at expiry, job retried and completed | Passed |
 | 11 | Deduplication with `singletonKey` on a **standard** queue | both sends accepted (**no deduplication**) | Observed (design must not rely on it) |
 | 12 | Deduplication with `singletonKey` on an `exclusive` queue | second send returned `null` | Passed |
-| 13 | Graceful `stop({ graceful: true, wait: true })` with a job in flight | the in-flight job completed before exit | Passed |
+| 13 | Graceful `stop({ graceful: true })` with a job in flight | the in-flight job completed before exit | Passed |
 | 14 | Connection use | pg-boss stayed within its `max: 3`; app pool lazily opened connections | Passed |
 | 15 | Opening clients until the cap | the 17th connection failed: *remaining connection slots are reserved for roles with the SUPERUSER attribute* (4 existing + 16 opened = 20) | Observed: **usable connections are about 17, not 20** |
 | 16 | `vector` extension created by the non-superuser | **not allowed** (`vector` is not a trusted extension; `pgcrypto` is) | Observed: acceptance test must confirm Aiven's admin user can enable it |
+
+### Correction found later (B1a)
+The spike script passed `wait: true` to `stop()`. pg-boss v12's `StopOptions` has only `close`, `graceful` and `timeout`; `wait` was ignored (TypeScript flagged it when the real code was written). The observed result (the in-flight job finished before exit) came from `graceful: true` itself. The scripts below still contain the extra option, kept as run.
 
 ### Corrections during the spike
 The first pg-boss run produced misleading numbers: a deliberately stuck job occupied the single worker slot and starved every later job (retries never ran, the dead-letter queue stayed empty). That is itself a design finding: **one stuck handler blocks a single-worker queue**, so handlers must honour `job.signal`, use per-job timeouts, and the worker should run at least two concurrent consumers. The rerun above uses two workers and a signal-aware handler. The pg-boss v12 API also differs from older documentation: `PgBoss` is a **named** export.

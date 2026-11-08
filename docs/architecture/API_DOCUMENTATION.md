@@ -79,3 +79,11 @@ Cross-user tests (IDOR) are generated per route from the route table so a new ro
 | 8 | `GET /api/progress` returns `AssessmentAttempt[]` with `takenAt` | Kept in spirit; derived from `attempts`/`answers` with real timestamps |
 | 9 | `GET /api/history` completed activities only; recommendations never in history | **Kept** unchanged |
 | 10 | Frontend `lib/auth/api.ts` reads per-path env overrides (`NEXT_PUBLIC_AUTH_*_PATH`) | Will be reduced to the Google start and `GET /me` calls in B2 |
+
+## 6. Implemented so far (B1a, 2026-11-07)
+
+| Endpoint | Status |
+|---|---|
+| `GET /api/v1/health` | **Implemented** (shallow, public). `200` when `ok` or `degraded`, `503` when `down` (invalid configuration, or a configured database that is unreachable). Body (`src/contracts/health.ts`): `status`, `time`, `checks.config` (`ok`/`invalid`), `checks.database` (`ok`/`unavailable`/`not_configured`), `checks.worker.mode` and `checks.worker.state` (`running`/`not_running`/`not_applicable`/`unknown`). Exposes enumerations only (no versions, hosts or error text). Sends `x-request-id` and `cache-control: no-store`. The deep authenticated variant and `/ops/jobs/:id` are **not** implemented |
+
+The error envelope (`src/contracts/errors.ts`, `src/server/http/route.ts`) and the `route()` wrapper that produces it are implemented and tested; every other endpoint in this document is still **Proposed**.

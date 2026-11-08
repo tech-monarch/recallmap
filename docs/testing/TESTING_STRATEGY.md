@@ -30,3 +30,17 @@
 ## 3. Statuses
 
 Planned, Executed, Passed, Failed, Blocked, Retested.
+
+## 4. Commands (B1a, 2026-11-07; run on Node 24)
+
+| Command | What it runs | Needs |
+|---|---|---|
+| `npm run typecheck` | `tsc --noEmit` | nothing |
+| `npm run lint` | ESLint 9 including the architecture boundary rules | nothing |
+| `npm run check:cycles` | import-cycle check over `src/` and `worker/` | nothing |
+| `npm test` | Vitest unit and component tests (database tests excluded) | nothing |
+| `npm run test:db` | database integration tests: migrations, constraints, isolation, sessions, worker, queue, status, embedded-once | `TEST_DATABASE_URL` pointing at a PostgreSQL whose **database name contains "test"** (the suite drops everything in it) |
+| `npm run validate` | typecheck, lint, tests, cycle check | nothing |
+| `npm run verify:infra` | acceptance script for a real PostgreSQL service (Aiven) | admin `DATABASE_URL`, run by the owner |
+
+Negative checks that were performed once and are recorded in ER-004: deliberate boundary violations (lint must fail), a deliberate import cycle (check must fail), and two mutations of the repository ownership filters (isolation tests must fail). They are procedures, not automated tests.

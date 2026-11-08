@@ -40,7 +40,8 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 - **Decide:** how RecallMap complies with Google's Gemini API Additional Terms, which say the Services must not be used in an application directed towards or likely to be accessed by individuals under 18, are for professional/business (not consumer) use, and require paid services for users in the EEA, Switzerland and the UK. Details and sources: `docs/architecture/FEASIBILITY_VERIFICATION.md` F1.
 - **Approaches:** (A) make RecallMap an 18+ product with an age gate and adult-only positioning; (B) use Gemini through Google Cloud if its terms permit your audience (to be verified); (C) change or add an AI provider whose terms permit school-age users (needs your approval, the adapter design allows it); (D) ask Google for written clarification.
 - **Recommendation:** treat this as blocking for the AI stages (concept extraction, embeddings, tutor, grading) and get qualified legal advice before any of them ship; decide your target learner age first (DR-15). Start with option A or B only after verification. Non-AI B1/B2 work is unaffected.
-- **Consequences:** if unresolved, no learner-facing AI can ship on the Gemini Developer API. This outranks DR-02 (the paid tier fixes data use but does not remove the age clause).
+- **Consequences:** if unresolved, no learner-facing AI can ship on the Gemini Developer API.
+- **Update 2026-11-07:** provider research started (`docs/architecture/AI_PROVIDER_COMPARISON.md`, **in progress, not complete**). Verified: the Gemini Developer API restriction; the same prohibition in archived Google Cloud generative-AI preview terms (current Cloud GA terms **not read**); Anthropic's and OpenAI's official guidance both **permit** minor-facing API products with safeguards (AI disclosure, public compliance statement, moderation and similar), which is not the same as being compliant. Data retention/training, DPA/ZDR eligibility, pricing, payment feasibility from Nigeria, embeddings and quality evaluation are still open. This outranks DR-02 (the paid tier fixes data use but does not remove the age clause).
 
 ## Milestone-specific
 
@@ -95,23 +96,27 @@ Decisions already settled by the owner (Master Directive A-G and the 2026-11-04 
 
 ## Added 2026-11-05
 
-### DR-19 OAuth/session library (B2)
+### DR-19 OAuth/session library (B2): **APPROVED 2026-11-07 (Arctic), with conditions; verification results in `docs/architecture/TECH_RESEARCH.md` 1a**
+> Conditions recorded: Authorization Code + PKCE + state; **ID tokens must be verified server-side with `jose`** (Arctic's `decodeIdToken` does not verify anything); opaque hashed sessions with expiry, rotation and revocation; ownership enforced in services and repositories; Google only. Open B2 verification: Google's live `jwks_uri`, `jose` engines and maintenance, clock skew. Original text follows.
 - **Approaches:** Arctic + our own session layer; Better Auth; Auth.js; hand-rolled.
 - **Recommendation:** Arctic 3.x with our own opaque hashed DB sessions (framework-independent, supports revocation, matches the approved session design). Auth.js is in security-patch mode per third-party reports and its DB sessions fit poorly with Next 16's proxy. Details: `docs/architecture/TECH_RESEARCH.md` section 1.
 - **Consequences:** more code we own (session table, rotation, revocation) but no framework schema to adopt.
 
-### DR-20 Node runtime version (B1a)
+### DR-20 Node runtime version (B1a): **APPROVED 2026-11-07: Node 24 LTS; pinned and verified**
+> Pinned in `.nvmrc` and `engines` (`>=24.0.0 <25`); CI workflow reads `.nvmrc`. Render supports Node 24 (docs verified). Typecheck, lint, 185 tests, 34 database tests and the production build passed on Node 24.22.2 (ER-004). Document-processing libraries to be re-verified in B3; if any has a Node 24 issue it will be documented before the runtime decision is revisited. Original text follows.
 - **Decide:** the Node version for local, CI and Render.
 - **Facts:** pg-boss needs 22.12+; `pdfjs-dist` 22.13+ or 24; `unpdf` needs 24; `officeparser` has strict patched ranges.
 - **Recommendation:** Node 24 LTS, pinned in `engines` and `.nvmrc`, after confirming Render honours `NODE_VERSION` and CI passes on it. The audit sandbox has Node 22.23.4.
 
-### DR-21 Worker mode on the free tier (B1a)
+### DR-21 Worker mode on the free tier (B1a): **APPROVED 2026-11-07 for development, with limitations; implemented in B1a**
+> `WORKER_MODE=embedded|standalone|off`; embedded starts once per process; at least two consumers; signal-aware handlers; idempotent, resumable jobs; heartbeat-based status so the UI never implies a sleeping worker finished a job; local standalone worker for heavy tasks. **Not production background processing.** Original text follows.
 - **Decide:** approve `WORKER_MODE=embedded|standalone|off`, with `embedded` as the Render-free default and a local `standalone` worker for heavy jobs.
 - **Why:** Render free instances cannot be Background Workers and a free web service sleeps after 15 idle minutes.
 - **Recommendation:** approve. Handlers must be idempotent, honour `job.signal`, run with at least two consumers, and development caps (5 MB, 20 pages) protect the small free instance. First paid step if unreliable: Render Starter web service (about $7/month, third-party figure).
 - **Consequences:** scheduled jobs (backups, revision scan) do not run reliably in Phase 0.
 
-### DR-22 Cloudflare R2 activation and payment method (before B1b)
+### DR-22 Cloudflare R2 activation and payment method (before B1b): **OPEN; official sources conflict, so UNVERIFIED**
+> Owner instruction (2026-11-07): do not add a card or authorize any payment without explicit approval. Findings: Cloudflare's product page says no credit card required; the current R2 get-started page says only that R2 is free to get started; an older cached docs copy said R2 must be purchased before the first bucket; third-party tutorials say a card is requested for verification. Exact dashboard steps for you are in `docs/deployment/SETUP_GUIDE.md` section 4. Nothing in the repository needs R2 yet. Original text follows.
 - **Decide:** whether you are willing to add a payment method if R2 requires one even for the free allowance (10 GB, 1M writes, 10M reads, free egress; overage billed).
 - **Status:** Unverified whether it is required. Recommendation: check in the Cloudflare dashboard, tell me the answer, and add no card without deciding. Fallback for development: fakes or a local S3-compatible store until B3.
 

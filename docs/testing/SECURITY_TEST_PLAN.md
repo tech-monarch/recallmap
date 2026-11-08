@@ -5,17 +5,17 @@
 | ID | Objective | Threat | Milestone | Status |
 |---|---|---|---|---|
 | SEC-AUTH-01..05 | OAuth `state` mismatch/replay rejected; PKCE enforced; ID token audience/issuer/expiry checked; unverified email rejected; redirect URI allowlist | login CSRF, token substitution, open redirect | B2 | Planned |
-| SEC-SESS-01..05 | cookie flags; expiry (idle and absolute); revocation on sign-out; revoked session unusable; token never stored in plaintext | session theft/fixation | B2 | Planned |
-| SEC-AUTHZ-* (generated per route) | user B cannot read/modify/delete any of user A's resources; ids guessed return 404 | IDOR, privilege escalation | B2 onward | Planned |
+| SEC-SESS-01..05 | cookie flags; expiry (idle and absolute); revocation on sign-out; revoked session unusable; token never stored in plaintext | session theft/fixation | B2 | Partially executed in B1a (service level: hash-only storage, idle and absolute expiry, rotation, revocation, suspended user; cookie flags unit-tested). Cookie behaviour in a browser, sign-out and OAuth are Planned (B2) |
+| SEC-AUTHZ-* (generated per route) | user B cannot read/modify/delete any of user A's resources; ids guessed return 404 | IDOR, privilege escalation | B2 onward | Partially executed in B1a (repository/service level isolation with mutation checks). Route-level cross-user tests are Planned with the routes |
 | SEC-CSRF-01..03 | unsafe request without Origin/custom header rejected; cross-site form post fails; GET has no side effects | CSRF | B2 | Planned |
 | SEC-XSS-01..04 | script in subject name, pasted text, concept text, AI output rendered inert; CSP blocks inline injection | stored/reflected XSS | B3-B5 | Planned |
-| SEC-SQLI-01..02 | injection payloads in filters, ids, search are parameterized; lint forbids interpolated raw SQL | SQL injection | B2 onward | Planned |
+| SEC-SQLI-01..02 | injection payloads in filters, ids, search are parameterized; lint forbids interpolated raw SQL | SQL injection | B2 onward | Partially: parameterized Drizzle only, attacker-shaped user ids rejected as `unauthenticated`; no injection payload suite yet |
 | SEC-UPLOAD-01..10 | wrong magic bytes; mismatched MIME; oversized; zip bomb; deeply nested archive; macro-enabled file; encrypted PDF; path traversal entry; SSRF via external reference; presigned URL reuse/other key | malicious files | B3 | Planned |
 | SEC-RATE-01..04 | limits on auth, upload authorization, AI endpoints, job creation; 429 and Retry-After | abuse, cost exhaustion | B2-B5 | Planned |
 | SEC-PI-01..06 | document and chat injections cannot change instructions, reveal secrets/other users' data, force an ineligible recommendation, forge citations, or trigger actions | prompt injection | B5-B6 | Planned |
-| SEC-AI-01..04 | secondary key never used for ineligible tasks; no fallback on 400/401/403/safety; secondary disabled leaves primary unaffected; secondary 401 auto-disables | AI processor misuse | B1/B5 | Planned |
-| SEC-SECRET-01..03 | no secrets in bundle, logs, API responses, repository, ZIP; secret scan in CI | credential exposure | every milestone | Planned |
-| SEC-LEAK-01..02 | errors carry requestId only; no stack traces | information leakage | B2 | Planned |
+| SEC-AI-01..04 | secondary key never used for ineligible tasks; no fallback on 400/401/403/safety; secondary disabled leaves primary unaffected; secondary 401 auto-disables | AI processor misuse | B1/B5 | Executed in B1a (gateway tests with fake providers: eligibility, no fallback on 400/401/403/safety, auto-disable on secondary auth failure, primary unaffected). Not tested against a real provider |
+| SEC-SECRET-01..03 | no secrets in bundle, logs, API responses, repository, ZIP; secret scan in CI | credential exposure | every milestone | Partially executed in B1a (logger redaction, config never echoes values, secret scans of commits and ZIPs); CI secret scanning Planned |
+| SEC-LEAK-01..02 | errors carry requestId only; no stack traces | information leakage | B2 | Executed in B1a (error envelope carries only the request id; no stack traces or internals) |
 | SEC-DEL-01..03 | deleting material/subject/account removes DB rows, R2 objects, embeddings; data hidden immediately | privacy, retention | B2-B3 | Planned |
 | SEC-HDR-01 | security headers and CSP present | clickjacking, MIME sniffing | B8 | Planned |
 | SEC-DEP-01 | dependency audit has no unresolved critical/high without an approved exception | known CVEs | every milestone | **Executed (ER-001 failing; ER-002 after B0: 0 critical/high, production deps 0 findings; 13 moderate/low in dev tooling)** |

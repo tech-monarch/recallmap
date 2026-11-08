@@ -142,3 +142,21 @@ Dependency rules (to be enforced with ESLint `no-restricted-imports` and a CI ch
 ## 9. Conflicts with the previous `docs/ARCHITECTURE.md`
 
 `docs/ARCHITECTURE.md` (milestone 5) predates the directive. It says: email/password plus Google (now Google only), "plain `pg` or Drizzle" (now Drizzle), single process (now API plus worker), `lib/storage` local/s3 providers (now R2 behind an `ObjectStore` adapter), `concept_prerequisites` without provenance (now with provenance and review status). It is kept for history with a note at the top; this file is authoritative.
+
+## 10. Implemented in B1a (2026-11-07), verified locally
+
+```
+src/contracts/             errors, health, jobs, preferences (Zod; no server or UI imports)
+src/server/platform/       config (Zod env, connection budget, DR-18 guard), logger (redaction), errors, request-context
+src/server/http/route.ts   thin Web-standard route wrapper, JSON/query parsing (no Next.js dependency)
+src/server/db/             Drizzle schema (identity), client (pools, ping), migrate
+src/server/modules/        shared (user scoping), users, preferences, auth (tokens, cookie, session repository + service)
+src/server/providers/ai    AiProvider interface, task registry, fake provider, circuit breaker, AiGateway
+src/server/providers/storage  ObjectStore interface, in-memory fake, safe key builder
+src/server/jobs/           queues, payload schemas, runtime (worker, queue client), heartbeat, status service, embedded start-once
+src/server/health.ts       health computation
+app/api/v1/health/route.ts only API route so far;  instrumentation.ts starts the embedded worker when WORKER_MODE=embedded
+worker/index.ts            standalone worker entry (npm run worker)
+scripts/                   migrate.ts, verify-infra.ts, check-cycles.mjs
+```
+Boundaries are enforced by ESLint `no-restricted-imports` (server and contracts may not import React, Next.js or frontend code; modules may not import each other's repositories) and by `npm run check:cycles`; both were negative-tested with deliberate violations (ER-004). Behaviour verified on the real Next.js server: the frontend runs with no environment at all; health reports `degraded` without a database, `ok` with one, `503 down` when it is unreachable or the configuration is invalid, and recovers by itself after a database restart; the embedded worker starts once, shows `running`, and drains on SIGTERM.

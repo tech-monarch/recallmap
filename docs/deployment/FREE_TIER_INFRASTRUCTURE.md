@@ -98,7 +98,7 @@ A Render **free** service cannot be a dedicated worker, and a free web service s
 Rules that make embedded mode safe:
 1. Every handler is **idempotent and resumable** (already required) and honours `job.signal` so an expired or stopping job aborts cleanly (verified in the spike).
 2. The processing UI polls a status endpoint, so an active user keeps the service awake while their document processes.
-3. Graceful shutdown on SIGTERM: stop fetching, let in-flight work finish within the grace period, then exit (verified: `stop({ graceful: true, wait: true })`).
+3. Graceful shutdown on SIGTERM: stop fetching, let in-flight work finish within the grace period, then exit (verified: `stop({ graceful: true })`). In the embedded worker Next.js would otherwise call `process.exit` before the drain finishes (observed in the real server), so once a shutdown signal arrives, and only then, `process.exit` is held until the bounded drain completes (`WORKER_SHUTDOWN_TIMEOUT_MS`, default 25 s); verified against the real server (ER-004).
 4. Development caps (configurable): max file 5 MB, 20 pages, one concurrent job, so a 512 MB instance is not exhausted.
 5. Scheduled jobs (backup, revision scan) are not relied on in Phase 0.
 
@@ -146,6 +146,8 @@ Measured (Simulated, PostgreSQL 16): about 6.3 KB per chunk at 768 dimensions wi
 8. The health endpoint reports database reachability and disk use; failures show an error page, never demo data (B4 in the architecture).
 
 ## 8. What can be implemented now (B1 split)
+
+> **Status 2026-11-07: B1a is IMPLEMENTED and verified locally** (`docs/milestones/CURRENT_STATUS.md`, `docs/testing/TEST_EXECUTION_REPORT.md` ER-004). B1b still needs the owner's actions (Aiven acceptance test, Render service, R2 decision, Gemini dev key).
 
 **B1a, safe now** (no paid service, no unverified infrastructure; tests against a local PostgreSQL): Zod environment configuration (including `APP_ENV`, `WORKER_MODE`, `AI_DATA_MODE`, pool sizes); shared contracts folder; error envelope, request context and redacting logger; boundary lint rules and a circular-dependency check; `createDb` factory and Drizzle setup with the identity tables and first migration, repository pattern with mandatory `userId` and isolation tests; `AiProvider` and `ObjectStore` interfaces with fakes; Gemini and R2 adapters with mocked tests (no live calls); pg-boss wiring with all three worker modes and tests; `/api/v1/health`; a local `docker-compose.yml`; a rewritten `.env.example`; a GitHub Actions workflow (typecheck, lint, tests with a Postgres service container, audit) on the free runner.
 

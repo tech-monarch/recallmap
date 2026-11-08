@@ -7,9 +7,9 @@ Last updated 2026-11-04. Statuses: Planned, In Progress, Partially Implemented, 
 | Landing page | Implemented | static page | n/a | remove the "open workspace" bypass once auth exists |
 | Google sign-in | Planned | button only | none | B2 |
 | Email/password, forgot/reset | Deprecated for launch (DR-11) | screens + client | none | out of launch scope |
-| Session, route guard, `/me` | Planned | none | none | B2 |
+| Session, route guard, `/me` | Planned (session token/hash/cookie/service foundation exists and is tested, not wired to any route; see the B1a section) | none | partial foundation | B2 |
 | Onboarding | Planned | placeholder | none | B2 |
-| App and learning preferences | Partially Implemented | localStorage only | none | server persistence B2 |
+| App and learning preferences | Partially Implemented | localStorage only in the UI | repository + service + tables exist and are tested, not wired to any route | server wiring in B2 |
 | Theme | Tested (unit) | light/dark/system, local | n/a | |
 | Subjects (create) | Partially Implemented | in-memory | none | CRUD, archive, delete B3 |
 | Curriculum templates and versions | Planned | none | none | B3 |
@@ -32,3 +32,20 @@ Last updated 2026-11-04. Statuses: Planned, In Progress, Partially Implemented, 
 | Demo mode isolation | Planned | mixed today | n/a | `DataSource`, B3 |
 | Legal and information pages | Planned | none | n/a | B2-B8 |
 | Backups, monitoring, ops dashboard | Planned | n/a | none | B8 |
+
+## Backend foundation (B1a, 2026-11-07; verified locally on Node 24 and a 20-connection PostgreSQL 16, not on Aiven)
+
+| Feature | Status | Notes |
+|---|---|---|
+| Environment configuration (Zod), connection-budget check, DR-18 guard | Tested | `src/server/platform/config.ts` |
+| Error envelope, request ids, route wrapper | Tested | no stack traces or internals returned |
+| Structured logger with secret and personal-data redaction | Tested | by key and by value pattern |
+| Drizzle schema and migration for identity tables | Tested (local PostgreSQL only) | pgvector deliberately not enabled yet |
+| User-scoped repositories and per-user isolation | Tested (repository and service level, including mutation checks) | route-level isolation tests come with the routes |
+| Opaque session service (hashing, expiry, rotation, revocation) | Tested | not wired to any route; no OAuth yet |
+| AI gateway (data-mode guard, eligibility, fallback rules, breaker) with a fake provider | Tested | no Gemini adapter yet; no real provider is called |
+| Object-store interface and fake | Tested | no R2 adapter yet |
+| pg-boss worker (embedded, standalone), heartbeat, job status | Tested (local PostgreSQL) | embedded mode is development-only |
+| `GET /api/v1/health` | Tested on the real server | shallow, public |
+| Boundary lint rules, cycle check, CI workflow | Rules and cycle check tested; **CI workflow never run** | |
+| Aiven acceptance script (`npm run verify:infra`) | Tested locally; **not run on Aiven** | owner runs it |

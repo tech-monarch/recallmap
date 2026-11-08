@@ -18,9 +18,9 @@ An adaptive learning and knowledge-retention platform. It helps learners see wha
 8. The backend and database own learner data; the frontend caches but is not a source of truth.
 
 ## Current implementation status (verified 2026-11-04)
-- **Implemented:** the frontend prototype only (Next.js App Router, React 19, Tailwind 4): landing, auth screens (no backend), dashboard, library, knowledge map, gaps, history, progress, sessions, preferences. Everything runs on **hardcoded demo data**. Real behaviour: deterministic grading of three demo questions, client-side progress/history derivations, preferences and theme in `localStorage`.
-- **Not implemented:** backend, database, authentication, storage, document processing, AI calls, persistence of learning data.
-- **Verified checks (2026-11-04, after B0):** typecheck passes; 116 unit/UI tests pass; ESLint 9 runs clean (1 warning); `next build` passes (Next 16.4.5); `npm audit`: 0 high/critical, 0 findings in production dependencies. Details: `docs/testing/TEST_EXECUTION_REPORT.md`.
+- **Implemented:** the frontend prototype (landing, auth screens without a backend, dashboard, library, knowledge map, gaps, history, progress, sessions, preferences; all on **hardcoded demo data**) **and the B1a backend foundation** (configuration, logging, errors, identity schema and migration, user-scoped repositories, session service, AI gateway with fakes, object-store interface, pg-boss worker, `GET /api/v1/health`), verified locally on Node 24 and PostgreSQL 16 (not on Aiven). No route uses sessions yet.
+- **Not implemented:** authentication flows (OAuth), API routes beyond health, any real AI provider call or adapter, R2 storage, document processing, persistence of learning data, learner-state engine, recommendations, retention.
+- **Verified checks (2026-11-07):** typecheck, lint (0 errors), 185 unit/component tests, 34 database integration tests and the production build pass on Node 24.22.2; production dependencies have 0 audit findings. Details: `docs/testing/TEST_EXECUTION_REPORT.md` (ER-004). The Aiven acceptance test has not been run.
 
 ## Phase 0 infrastructure (owner decision 2026-11-05)
 Aiven free PostgreSQL + Render free web service (embedded worker) + Cloudflare R2 free allowance + Gemini Developer API with **synthetic data only**. No paid service without explicit approval. See `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`.

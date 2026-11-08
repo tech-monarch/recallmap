@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-07: B1a backend foundation (implementation, verified locally)
+- **Added:** Zod environment configuration with connection-budget and DR-18 guards; shared contracts; redacting structured logger; error envelope and route wrapper; Drizzle schema and migration `0000_identity_foundation` (users, auth_identities, sessions, oauth_states, app_preferences, learning_preferences, worker_heartbeats); user-scoped repositories and services (users, preferences, sessions); session tokens/cookies; vendor-neutral AI interfaces, fake provider, circuit breaker and gateway; object-store interface and fake; pg-boss worker (embedded and standalone) with heartbeats and job status; `GET /api/v1/health`; `instrumentation.ts` embedded-worker hook; `worker/index.ts`; `scripts/migrate.ts`, `scripts/verify-infra.ts`, `scripts/check-cycles.mjs`.
+- **Tooling:** Node 24 pinned (`.nvmrc`, `engines`); ESLint boundary rules; split Vitest configs (`npm test`, `npm run test:db`); `.env.example` rewritten; `docker-compose.yml` and init SQL (untested); GitHub Actions workflow (never run).
+- **Dependencies added:** `drizzle-orm`, `pg`, `pg-boss` (runtime); `drizzle-kit`, `@types/pg`, `tsx` (dev).
+- **Database changes:** first migration only; no extensions.
+- **Tests:** 185 unit/component (69 new) and 34 database integration tests pass; real-server scenarios and acceptance-script runs recorded in ER-004.
+- **Fixed during the work:** empty-enum config bug; gateway fallback gaps; embedded SIGTERM drain.
+- **Docs:** provider comparison started (in progress), Arctic/ID-token verification, Render Node 24 verified, R2 payment-method question documented as unverified, decisions DR-19 to DR-22 updated.
+- **No frontend feature changes. No breaking changes. Nothing is deployed and no paid service was used.**
+
 ## 2026-11-05: Free-tier infrastructure planning (documentation only)
 - Added `docs/deployment/FREE_TIER_INFRASTRUCTURE.md`, `docs/deployment/SETUP_GUIDE.md`, `docs/architecture/TECH_RESEARCH.md`, `docs/testing/INFRA_COMPATIBILITY_SPIKE.md` (ER-003).
 - Recorded owner decisions: Aiven free plan (DR-03), Render free tier (DR-05), Gemini with synthetic data only and DR-18 as a production blocker, DR-02 still open; added DR-19 to DR-23.

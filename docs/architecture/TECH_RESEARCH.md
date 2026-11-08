@@ -13,6 +13,16 @@ Labels: **Verified** (package registry or official page read 2026-11-05), **Thir
 
 Implementation notes (Proposed): Authorization Code + **PKCE** + `state` (stored server-side in `oauth_states`, single use, short TTL); verify the ID token server-side (issuer, audience, expiry, `email_verified`); link by Google `sub`; opaque 256-bit session token, only its hash stored; cookie `HttpOnly`, `Secure` in production, `SameSite=Lax`; rotation on sign-in; session list and revoke. Route protection in Next 16 uses `proxy.ts` (the renamed middleware, per the third-party report) plus a server-side check in layouts and every API route; **the proxy is only a redirect convenience, authorization lives in the services**. Re-verify Arctic's current API at install time.
 
+### 1a. Verification results for DR-19 (2026-11-07): Arctic is approved on these conditions
+
+Approved by the owner on 2026-11-07, conditional on verification before implementation (B2). Verified so far:
+- **Package:** `arctic` 3.7.0, MIT, last published 2026-07-29 (npm registry). Its dependency list and any advisories must be reviewed again at install time (`npm audit` is part of CI).
+- **API (read from the installed type definitions):** `new Google(clientId, clientSecret, redirectURI)`; `createAuthorizationURL(state, codeVerifier, scopes)`; `validateAuthorizationCode(code, codeVerifier)` returning tokens; plus `generateState()`, `generateCodeVerifier()`, `refreshAccessToken`, `revokeToken`. PKCE (S256) and state are supported.
+- **Security finding (verified in the source):** Arctic's `decodeIdToken` only **decodes** the JWT. It performs **no signature, issuer, audience or expiry verification**. Arctic alone therefore does **not** satisfy the owner's requirement to verify Google's ID tokens.
+- **Therefore:** verify the ID token server-side with a maintained library: `jose` (6.2.15, MIT at the time of checking) using `createRemoteJWKSet` against Google's `jwks_uri` and `jwtVerify` with `issuer` = `https://accounts.google.com`, `audience` = our OAuth client id and `algorithms: ["RS256"]`; then require `email_verified === true`, a present `sub`, and a nonce we add to the authorization URL and check ourselves (Arctic does not manage nonces). Google's OpenID Connect reference confirms: the issuer is `https://accounts.google.com`, tokens are signed with keys published at the discovery document's `jwks_uri`, and `sub` (not email) is the stable user identifier.
+- **Not verified yet (B2 tasks):** the exact `jwks_uri` value from Google's live discovery document (the sandbox could not reach Google; read it at implementation time and cache it), `jose`'s Node engine range and maintenance status, clock-skew tolerance, and the consent-screen configuration. These are listed in `docs/milestones/DECISION_REGISTER.md` DR-19.
+- Our session design is unchanged: opaque 256-bit tokens, only the hash stored, absolute and idle expiry, rotation, revocation (implemented and tested in B1a), `HttpOnly` + `Secure` + `SameSite=Lax` cookies with the `__Host-` prefix when secure. Email/password authentication stays out of scope.
+
 ## 2. Knowledge-graph visualization and layout (DR-08)
 
 | Library | Facts | Role |
@@ -39,6 +49,8 @@ Proposal: prototype in B4 with `@xyflow/react` + `@dagrejs/dagre` (hierarchical)
 | OCR (provider) | Gemini multimodal or a dedicated OCR API | better quality | sends images to a provider: **subject to DR-18 and the synthetic-data rule** |
 | Image preprocessing | `sharp` 0.35.5 | Node >= 20.9 | resize/rotate before OCR |
 
+**Render supports Node 24 (verified 2026-11-07 from Render's Node version documentation):** `NODE_VERSION`, `.node-version`, `.nvmrc` or `package.json` `engines` select it, and services created since 2026-04-21 default to 24.14.1. Compatibility of the project's dependencies was verified by running typecheck, lint, tests, database tests and the production build on **Node 24.22.2** (ER-004); the document-processing libraries are not installed yet and remain to be verified in B3.
+
 Node version (DR-20): `unpdf` needs 24 and `pdfjs-dist` needs 22.13+; pg-boss needs 22.12+; Next 16.4.5 accepts newer. Proposal: **Node 24 LTS** for Render and local (confirm Render supports it via `NODE_VERSION`, and that Next/Drizzle/pg-boss are fine on it in CI) and pin it in `.nvmrc`/`engines`. The audit sandbox runs Node 22.23.4, so some libraries could not be exercised here.
 
 Hardening still required whatever the libraries: size/page/uncompressed-size/entry-count limits, no macro execution, no external references, per-job time and memory limits, magic-byte checks.
@@ -53,6 +65,8 @@ Hardening still required whatever the libraries: size/page/uncompressed-size/ent
 - **Cost control:** `ai_usage` per call, per-user daily budgets, caching of stable prompts, smaller models for extraction/grading, batch embeddings.
 
 ## 5. Alternative AI providers (contingency for DR-18)
+
+> **STATUS: IN PROGRESS, NOT COMPLETE (2026-11-07).** Verified findings and the open items are in `docs/architecture/AI_PROVIDER_COMPARISON.md`. The table below is only the original candidate list.
 
 **Not researched yet** beyond the Gemini terms. Candidate classes and the questions each must answer before adoption:
 
