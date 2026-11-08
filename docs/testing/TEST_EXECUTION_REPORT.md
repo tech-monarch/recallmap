@@ -127,3 +127,7 @@ An earlier run of this script gave wrong results because my script killed only t
 3. Embedded worker did not drain on SIGTERM (KI-25). Fixed, verified on the real server.
 4. pg-boss v12 `stop()` has no `wait` option; the spike scripts passed one that was ignored. Documentation corrected.
 5. A test-arithmetic mistake on the connection budget (12 + 2 + 3 = 17 is within budget). Test corrected.
+
+### Clean-clone verification of the committed tree (2026-11-07)
+A fresh clone of the B1a commits was installed from the lockfile (`npm ci`, 663 packages, Node 24.22.2) and re-checked: typecheck pass; lint 0 errors/1 warning; cycles none (39 files); **185** unit/component tests pass; **34** database tests pass; production build pass; `npm audit --omit=dev` 0. The first database run in the clone **failed with `ECONNREFUSED`** because the sandbox's local PostgreSQL had stopped between tool calls; it was restarted and the identical command then passed (7 + 10 + 8 + 9 tests). No repository file was found to be missing (the migration files are tracked).
+
