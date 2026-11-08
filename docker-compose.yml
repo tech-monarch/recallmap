@@ -1,0 +1,26 @@
+# Local development database that mimics the Aiven free plan limits (20 connections) with pgvector.
+# NOT VERIFIED in the audit sandbox (no Docker there): confirm the image tag and run `docker compose up -d` yourself.
+# Usage: docker compose up -d   then   npm run db:migrate   (DATABASE_URL from .env.local)
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: recallmap-postgres
+    restart: unless-stopped
+    command: ["postgres", "-c", "max_connections=20", "-c", "shared_buffers=128MB"]
+    environment:
+      POSTGRES_USER: recallmap
+      POSTGRES_PASSWORD: recallmap   # local development only
+      POSTGRES_DB: recallmap_dev
+    ports:
+      - "127.0.0.1:5432:5432"        # bound to localhost only
+    volumes:
+      - recallmap-pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recallmap -d recallmap_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  recallmap-pgdata:
