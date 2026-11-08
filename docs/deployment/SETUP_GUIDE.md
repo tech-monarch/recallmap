@@ -133,6 +133,8 @@ Pass criteria: `vector` and `pgcrypto` created, schema creation allowed, `max_co
 
 ## 8. Migration and deployment procedures (Proposed)
 
+> CI is **not active**: the workflow is stored as `docs/deployment/ci.yml.example` because GitHub rejects workflow files from a token without the `workflow` permission. Until it is enabled, run `npm run validate`, `npm run test:db` and `npm run build` yourself before deploying.
+
 1. Branch, change `src/server/**/schema.ts`, run `npm run db:generate`, review the generated SQL (never hand-edit applied migrations), commit it.
 2. CI applies all migrations to an empty database and runs the isolation and schema tests.
 3. Before touching `cloud-dev`: manual `pg_dump` (section 2.8).

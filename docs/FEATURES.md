@@ -47,5 +47,6 @@ Last updated 2026-11-04. Statuses: Planned, In Progress, Partially Implemented, 
 | Object-store interface and fake | Tested | no R2 adapter yet |
 | pg-boss worker (embedded, standalone), heartbeat, job status | Tested (local PostgreSQL) | embedded mode is development-only |
 | `GET /api/v1/health` | Tested on the real server | shallow, public |
-| Boundary lint rules, cycle check, CI workflow | Rules and cycle check tested; **CI workflow never run** | |
+| Boundary lint rules, cycle check | Tested (including negative checks) | |
+| CI workflow | **Not active.** Stored as `docs/deployment/ci.yml.example`; never run; GitHub rejected pushing it (token lacks `workflow` permission) | |
 | Aiven acceptance script (`npm run verify:infra`) | Tested locally; **not run on Aiven** | owner runs it |

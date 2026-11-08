@@ -1,0 +1,44 @@
+# NOT ACTIVE: this is the proposed CI workflow, stored here because the available GitHub token cannot push workflow files.
+# To enable: copy this file to .github/workflows/ci.yml (GitHub web editor, or grant the token the Workflows read/write permission).
+# It has never run; action versions and the Postgres service container are unverified.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: recallmap
+          POSTGRES_PASSWORD: recallmap
+          POSTGRES_DB: recallmap_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U recallmap -d recallmap_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://recallmap:recallmap@localhost:5432/recallmap_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run check:cycles
+      - run: npm test
+      - run: npm run test:db
+      - name: Dependency audit (production dependencies)
+        run: npm audit --omit=dev
+      - run: npm run build
